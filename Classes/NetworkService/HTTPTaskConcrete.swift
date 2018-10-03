@@ -8,70 +8,49 @@
 import Foundation
 import os
 
-/// Handles a task and conforms to the HTTPTask protocol. Is a class because there would be problems with the variables of reference type being nil if it was a struct.
+/// Logging subsystem for custom logging
+private let logSubsystem = "de.apploft.networkapp.HTTPTaskConcrete"
+private let customLog = OSLog(subsystem: logSubsystem, category: "Task")
+
+/// Handles a task and conforms to the HTTPTask protocol. Is a class because there would be problems
+/// with the variables of reference type being nil if it was a struct.
 public class HTTPTaskConcrete: HTTPTask {
     
     /// Created session task
     public var urlSessionTask: URLSessionTask? {
         didSet {
-            guard urlSessionTask != nil else {
-                os_log("URLSessionTask that was set is nil!", log: customLog, type: .error)
-                return
+            if let urlSessionTask = self.urlSessionTask {
+                let oldState = state
+                state = URLSessionTaskState(urlSessionTask: urlSessionTask, defaults: oldState)
+            } else {
+                state = NoURLSessionTaskState()
             }
-            switch taskState {
-            case .canceling:
-                if urlSessionTask?.state != URLSessionTask.State.canceling {
-                    urlSessionTask?.cancel()
-                }
-            case .pending:
-                urlSessionTask?.resume()
-                taskState = .running
-            case .suspended:
-                if urlSessionTask?.state != URLSessionTask.State.suspended {
-                    urlSessionTask?.suspend()
-                }
-            default:
-                ()
-            }
-            os_log("URLSessionTask with taskIdentifier %d has been set", log: customLog, type: .info, urlSessionTask?.taskIdentifier ?? -1)
         }
     }
     
-    /// Identifier of the currently stored URL session task. Not a identifier for the HTTP task object itself.
+    /// Identifier of the currently stored URL session task.
+    /// Not a identifier for the HTTP task object itself.
     public var taskIdentifier: Int? {
         return urlSessionTask?.taskIdentifier
     }
     
-    /// Priority of the currently stored URL session task. Will be applied to eventual retries of the request as well if a value is set.
+    /// Priority of the currently stored URL session task. Will be applied to eventual retries of
+    /// the request as well if a value is set.
     public var priority: Float? {
         get {
-            return urlSessionTask?.priority
+            return state.priority
         }
         set {
-            urlSessionTask?.priority = (newValue)!
+            state.priority = newValue ?? URLSessionTask.defaultPriority
         }
     }
     
     public func getState() -> HTTPTaskState {
-        // Returns an internal property state as long as there is no URL task.
-        if let state = urlSessionTask?.state {
-            switch state {
-            case .running:
-                return HTTPTaskState.running
-            case .suspended:
-                return HTTPTaskState.suspended
-            case .canceling:
-                return HTTPTaskState.canceling
-            case .completed:
-                return HTTPTaskState.completed
-            }
-        } else {
-            // urlSessionTask has not been set yet, return the internal taskState
-            return self.taskState
-        }
+        return state.taskState
     }
     
-   /// Completion handler for the task. Takes the response of the request or an error as parameter. Will be executed when the task of the request is completed.
+    /// Completion handler for the task. Takes the response of the request or an error as parameter.
+    /// Will be executed when the task of the request is completed.
     public var completionHandler: NetworkCompletionHandler
     
     /// HTTPResponse object that contains the URL response and data of a task.
@@ -82,43 +61,30 @@ public class HTTPTaskConcrete: HTTPTask {
     
     /**
      Initializer for HTTPTask. Takes a URLSessionTask object and a completion handler as parameters.
+     - Parameter task: The created URLSesssion task. Optional parameter, can also be set later.
      - Parameter completionHandler: The completion handler that should be called when the task is completed. Takes the response as parameter or an error.
      */
-    public init(completionHandler: @escaping NetworkCompletionHandler) {
+    public init(task: URLSessionTask? = nil, completionHandler: @escaping NetworkCompletionHandler) {
         self.completionHandler = completionHandler
-        taskState = .suspended
-    }
-    
-    /**
-     Initializer for HTTPTask. Takes a URLSessionTask object and a completion handler as parameters.
-     - Parameter task: The created URLSesssion task. Optional parameter, can also be set later. 
-     - Parameter completionHandler: The completion handler that should be called when the task is completed. Takes the response as parameter or an error.
-     */
-    public convenience init(task: URLSessionTask?, completionHandler: @escaping NetworkCompletionHandler) {
-        self.init(completionHandler: completionHandler)
         self.urlSessionTask = task
+        
+        if let urlSessionTask = self.urlSessionTask {
+            state = URLSessionTaskState(urlSessionTask: urlSessionTask)
+        } else {
+            state = NoURLSessionTaskState()
+        }
     }
     
     public func resume() {
-        if urlSessionTask != nil {
-            urlSessionTask?.resume()
-        } else {
-            taskState = .pending
-        }
+        state.resume()
     }
     
     public func cancel() {
-        if urlSessionTask != nil {
-            urlSessionTask?.cancel()
-        }
-        taskState = .canceling
+        state.cancel()
     }
     
     public func suspend() {
-        if urlSessionTask != nil {
-            urlSessionTask?.suspend()
-        }
-        taskState = .suspended
+        state.suspend()
     }
     
     /**
@@ -156,8 +122,6 @@ public class HTTPTaskConcrete: HTTPTask {
      - Parameter error: An Error object if the task was completed with an error. 
      */
     public func didCompleteWithError(error: Error?) {
-        taskState = .completed
-        
         if let error = error {
             os_log("Task with taskIdentifier %d did complete with error", log: customLog, type: .error, urlSessionTask?.taskIdentifier ?? -1)
             completionHandler(.failure(error))
@@ -178,16 +142,109 @@ public class HTTPTaskConcrete: HTTPTask {
         
         completionHandler(.success(httpResponse))
     }
-    
     //
     // MARK: - PRIVATE
     //
+    private var state: URLSessionTaskStateAndPriority
+}
+
+//
+//
+protocol URLSessionTaskStateAndPriority {
+    var priority: Float { get set }
+    var taskState: HTTPTaskState { get set }
     
-    /// State property to provide a value before a URL task has been set. Will be set to pending if the task.resume() had already been called
-    private var taskState: HTTPTaskState = .suspended
+    func resume()
+    func cancel()
+    func suspend()
+}
+
+// A proxy to stand in when we still have no URLSessionTask object
+//
+class NoURLSessionTaskState: URLSessionTaskStateAndPriority {
+    var priority: Float = URLSessionTask.defaultPriority
+    /// State property to provide a value before a URL task has been set.
+    // Will be set to pending if the task.resume() had already been called
+    var taskState: HTTPTaskState = .suspended
     
-    /// Logging subsystem for custom logging
-    private static let logSubsystem = "de.apploft.networkapp.HTTPTaskConcrete"
-    private let customLog = OSLog(subsystem: logSubsystem, category: "Task")
+    func resume() {
+        taskState = .pending
+    }
     
+    func cancel() {
+        taskState = .canceling
+    }
+    
+    func suspend() {
+        taskState = .suspended
+    }
+}
+
+// A proxy when we have a URLSessionTask object
+//
+class URLSessionTaskState: URLSessionTaskStateAndPriority {
+    var priority: Float {
+        get {
+            return urlSessionTask.priority
+        }
+        
+        set {
+            urlSessionTask.priority = newValue
+        }
+    }
+    
+    var taskState: HTTPTaskState {
+        get {
+            switch urlSessionTask.state {
+            case .running:
+                return HTTPTaskState.running
+            case .suspended:
+                return HTTPTaskState.suspended
+            case .canceling:
+                return HTTPTaskState.canceling
+            case .completed:
+                return HTTPTaskState.completed
+            }
+        }
+        
+        set {}
+    }
+    
+    init(urlSessionTask:URLSessionTask, defaults: URLSessionTaskStateAndPriority = NoURLSessionTaskState()) {
+        self.urlSessionTask = urlSessionTask
+        self.urlSessionTask.priority = defaults.priority
+        
+        switch defaults.taskState {
+        case .canceling:
+            if urlSessionTask.state != URLSessionTask.State.canceling {
+                urlSessionTask.cancel()
+            }
+        case .pending:
+            urlSessionTask.resume()
+        case .suspended:
+            if urlSessionTask.state != URLSessionTask.State.suspended {
+                urlSessionTask.suspend()
+            }
+        default:
+            break
+        }
+        
+        os_log("URLSessionTask with taskIdentifier %d has been set",
+               log: customLog,
+               type: .info, urlSessionTask.taskIdentifier)
+    }
+    
+    func resume() {
+        urlSessionTask.resume()
+    }
+    
+    func cancel() {
+        urlSessionTask.cancel()
+    }
+    
+    func suspend() {
+        urlSessionTask.suspend()
+    }
+    
+    private var urlSessionTask: URLSessionTask
 }
