@@ -36,12 +36,12 @@ public class HTTPTaskConcrete: HTTPTask {
     
     /// Priority of the currently stored URL session task. Will be applied to eventual retries of
     /// the request as well if a value is set.
-    public var priority: Float? {
+    public var priority: Float {
         get {
             return state.priority
         }
         set {
-            state.priority = newValue ?? URLSessionTask.defaultPriority
+            state.priority = newValue
         }
     }
     

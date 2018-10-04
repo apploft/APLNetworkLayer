@@ -36,5 +36,5 @@ public protocol HTTPTaskStateInfo: class {
 
 public protocol HTTPTaskPriority: class {
     /// The relative priority at which a host should handle the task, specified as a floating point value between 0.0 (lowest priority) and 1.0 (highest priority).
-    var priority: Float? { get set }
+    var priority: Float { get set }
 }
