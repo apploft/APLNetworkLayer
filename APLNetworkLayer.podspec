@@ -7,8 +7,8 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
           This network layer is a wrapper for Apple's network classes and 
           functions that allows to use it conveniently made with Swift. It 
-          is intentionally not using cocoapods or other dependency managers 
-          in order to keep things simple and making extension and updating easier. 
+          provides all common features needed for network calls in iOS 
+          development. 
                    DESC
 
   s.homepage     = "https://github.com/apploft/APLNetworkLayer.git"

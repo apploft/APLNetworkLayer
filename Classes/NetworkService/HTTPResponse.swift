@@ -25,7 +25,7 @@ public protocol HTTPResponse: class {
     /// The Data object if there is data attatched to the response. 
     var data: Data? { get }
     
-    /// The state of the url response according to the status code. Returns .undefined if the status code is not recognized.
+    /// The status code of the url response as state of the ResponseState enum. Returns .undefined if the status code is not recognized.
     var state: ResponseState { get }
     
 }
