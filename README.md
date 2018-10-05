@@ -93,7 +93,7 @@ This can also be done with absolute URLs and different types of requests. You ar
 
 ## Architecture
 
-<img src="https://raw.githubusercontent.com/apploft/APLNetworkLayer/Resources/NetworkLayer.png">
+<img src="/Resources/NetworkLayer.png">
 
 ## License
 
