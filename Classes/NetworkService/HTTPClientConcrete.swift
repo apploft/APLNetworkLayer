@@ -88,10 +88,10 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
         if requestDelegates.isEmpty {
             createURLSessionTask(httpTask: httpTask, with: urlRequest, startTaskManually: startTaskManually)
         } else {
-            for connectionListener in requestDelegates {
-                connectionListener.didCreateRequest(urlRequest: urlRequest) { () in
+            for requestDelegate in requestDelegates {
+                requestDelegate.didCreateRequest(urlRequest: urlRequest) { () in
                     
-                    if connectionListener === requestDelegates.last {
+                    if requestDelegate === requestDelegates.last {
                         createURLSessionTask(httpTask: httpTask, with: urlRequest, startTaskManually: startTaskManually)
                         os_log("HTTPTask with URLSessionTask was created.", log: customLog, type: .info)
                     }
@@ -129,7 +129,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     /// An array of http tasks which are currently in use (running, suspended, retried etc) and not completed yet.
     private var httpTasks = [HTTPTaskConcrete]()
     
-    /// Array of ConnectionListeners which are called before the request is executed and when the result is handled.
+    /// Array of request delegates which are called before the request is executed and when the result is handled.
     private var requestDelegates = [RequestDelegate]()
     
     /// Logging subsystem for custom logging
@@ -268,13 +268,13 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
             return
         }
         var retry = false
-        for connectionListener in requestDelegates {
-            connectionListener.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
+        for requestDelegate in requestDelegates {
+            requestDelegate.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
                 if shouldRetry && httpTask.retryCounter < maxRetries {
                     retry = true
                 }
                 
-                if connectionListener === requestDelegates.last {
+                if requestDelegate === requestDelegates.last {
                     if retry {
                         retryRequest(httpTask: httpTask)
                     } else {

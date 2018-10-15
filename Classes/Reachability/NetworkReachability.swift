@@ -44,7 +44,7 @@ public class NetworkReachability {
         observationStarted = true
     }
     
-    fileprivate func stopObservatioIfPossible() {
+    fileprivate func stopObservationIfPossible() {
         guard observationStarted == true             else { return }
         guard networkReachabilityObservers.count > 0 else { return }
         
@@ -56,7 +56,7 @@ public class NetworkReachability {
     @objc func didReceiveNetworkReachabilityChangeNotification(_ : NSNotification) {
         observerArrayGuard.lock()
         networkReachabilityObservers.compact()
-        stopObservatioIfPossible()
+        stopObservationIfPossible()
         let observers = networkReachabilityObservers.allObjects
         observerArrayGuard.unlock()
         
