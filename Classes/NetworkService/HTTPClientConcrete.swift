@@ -88,10 +88,16 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
         if requestDelegates.isEmpty {
             createURLSessionTask(httpTask: httpTask, with: urlRequest, startTaskManually: startTaskManually)
         } else {
+            var counter = 0
+            
             for requestDelegate in requestDelegates {
                 requestDelegate.didCreateRequest(urlRequest: urlRequest) { () in
-                    
-                    if requestDelegate === requestDelegates.last {
+                    // TODO use alternative of OSAtomicIncrement32(&value)
+                    doThreadSafe {
+                        counter += 1
+                    }
+                
+                    if counter == requestDelegates.count {
                         createURLSessionTask(httpTask: httpTask, with: urlRequest, startTaskManually: startTaskManually)
                         os_log("HTTPTask with URLSessionTask was created.", log: customLog, type: .info)
                     }
@@ -268,13 +274,18 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
             return
         }
         var retry = false
+        var counter = 0
         for requestDelegate in requestDelegates {
             requestDelegate.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
+                // TODO use alternative of OSAtomicIncrement32(&value)
+                doThreadSafe {
+                    counter += 1
+                }
                 if shouldRetry && httpTask.retryCounter < maxRetries {
                     retry = true
                 }
                 
-                if requestDelegate === requestDelegates.last {
+                if counter == requestDelegates.count {
                     if retry {
                         retryRequest(httpTask: httpTask)
                     } else {
