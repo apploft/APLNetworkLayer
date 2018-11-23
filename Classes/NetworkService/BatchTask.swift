@@ -8,7 +8,7 @@
 import Foundation
 
 /// typealias for the batch request completion handler which takes a dictionary filled with TaskIdentifier and Result objects as parameter and returns Void.
-public typealias BatchTaskCompletionHandler = ([TaskIdentifier: Result<HTTPResponse>]) -> Void
+public typealias BatchTaskCompletionHandler = ([TaskIdentifier: HTTPResult<HTTPResponse>]) -> Void
 
 /// TaskIdentifier to later identify the result of the given request. Not to be confused with the task identifier of URLSessionTask or URLSessionDataTask.
 public typealias TaskIdentifier = String

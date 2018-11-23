@@ -34,7 +34,7 @@ class RequestTaskRelativeURLTests: XCTestCase {
             XCTFail("Request could not be created. Something is broken.")
             return
         }
-        let task = httpClient.createHTTPTask(urlRequest: request.urlRequest) { (result: APLNetworkLayer.Result<HTTPResponse>) in
+        let task = httpClient.createHTTPTask(urlRequest: request.urlRequest) { (result: APLNetworkLayer.HTTPResult<HTTPResponse>) in
             switch result {
             case .success(let httpResponse):
                 switch httpResponse.state {

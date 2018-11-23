@@ -10,14 +10,14 @@ import Foundation
 public typealias HTTPClient = HTTPClientCore & ConvenienceRequestCreating & ConvenienceRequestExecuting
 
 /// typealias for the network completion handler with a HTTPResponse or Error as parameters and returns Void
-public typealias NetworkCompletionHandler = (Result<HTTPResponse>) -> Void
+public typealias NetworkCompletionHandler = (HTTPResult<HTTPResponse>) -> Void
 
 /**
  Result enum to handle the success and failure cases of the HTTP request.
  - case success(T) returns an object of type T that implements the Decodable protocol in success case.
  - case failure(Error) returns an object of type error containing the details of the error in case of failure.
  */
-public enum Result<T> {
+public enum HTTPResult<T> {
     /// Returns an object of type T in success case.
     case success(T)
     /// eturns an object of type error containing the details of the error in case of failure.

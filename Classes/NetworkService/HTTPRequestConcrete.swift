@@ -57,7 +57,7 @@ public struct HTTPRequestConcrete: HTTPRequest {
             return URLQueryItem(name: key, value: value)
         }
         
-        var request = URLRequest(url: (urlComponents?.url!)!, cachePolicy: self.cachePolicy, timeoutInterval: self.timeoutInterval)
+        var request = URLRequest(url: (urlComponents?.url)!, cachePolicy: self.cachePolicy, timeoutInterval: self.timeoutInterval)
         
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = headers as? [String:String]

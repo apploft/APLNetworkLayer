@@ -28,7 +28,7 @@ class RequestTaskAbsoluteURLTasks: XCTestCase {
             return
         }
          let request = httpClient.GETRequest(absoluteUrl: url)
-        let task = httpClient.createHTTPTask(urlRequest: request.urlRequest) { (result: APLNetworkLayer.Result<HTTPResponse>) in
+        let task = httpClient.createHTTPTask(urlRequest: request.urlRequest) { (result: APLNetworkLayer.HTTPResult<HTTPResponse>) in
             switch result {
             case .success(let httpResponse):
                 switch httpResponse.state {

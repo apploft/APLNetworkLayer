@@ -67,7 +67,7 @@ public class BatchTaskConcrete: BatchTask {
     
     private let client: HTTPClient
     private var tasks = [TaskIdentifier: HTTPTask]()
-    private var results = [TaskIdentifier: Result<HTTPResponse>]()
+    private var results = [TaskIdentifier: HTTPResult<HTTPResponse>]()
     
     /// Completion handler which will be executed after all tasks are completed.
     private let completionHandler: BatchTaskCompletionHandler
@@ -95,7 +95,7 @@ public class BatchTaskConcrete: BatchTask {
      - Parameter key: The key which will be used to save the corresponding task and result.
      */
     private func addRequest(urlRequest: URLRequest, withKey key: TaskIdentifier) {
-        let task = client.createHTTPTask(urlRequest: urlRequest, startTaskManually: true) { (result: Result<HTTPResponse>) in
+        let task = client.createHTTPTask(urlRequest: urlRequest, startTaskManually: true) { (result: HTTPResult<HTTPResponse>) in
             var allResultsThere = false
             self.doThreadSafe {
                 self.results[key] = result
