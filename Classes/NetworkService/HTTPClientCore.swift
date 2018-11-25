@@ -67,7 +67,7 @@ public protocol HTTPClientCore: class {
      Takes an URLRequest as a parameter and executes it. Creates and resumes a task with the URLSession in the process which is saved in a directory and returns the task conforming to the HTTPTask protocol.
      
      - Parameter urlRequest: A previously created URLRequest. If using a HTTP Request use the .urlRequest property to provide the request.
-     - Parameter startTaskManually: If set true the task needs to be resumed manually after calling this method. Default value is true, if set false the task will be resumed automatically in this function. Default value is true.
+     - Parameter startTaskManually: If set true the task needs to be resumed manually after calling this method. Default value is true, if set false the task will be resumed automatically in this function. Default value is false and the task will be executed immediately.
      - Parameter completionHandler: A completion handler that takes a result of type HTTPResponse or an Error object.
      
      - Returns: A task object that implements the Task Protocol.
@@ -98,7 +98,7 @@ extension HTTPClientCore {
         return createRequest(absoluteUrl: absoluteUrl,  method: method, queryParameters: queryParameters, headers: headers, body: body, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
     }
     
-    public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = true, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
+    public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = false, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
         return createHTTPTask(urlRequest: urlRequest, startTaskManually: startTaskManually, completionHandler: completionHandler)
     }
     
