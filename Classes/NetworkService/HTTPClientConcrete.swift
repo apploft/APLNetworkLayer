@@ -81,29 +81,10 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      - Returns: A task object that implements the Task Protocol.
      */
     public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = true, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
-        
-        let httpTask = HTTPTaskConcrete(completionHandler: completionHandler)
+        let httpTask = HTTPTaskConcrete(urlRequest: urlRequest, completionHandler: completionHandler)
         addTaskThreadSafe(httpTask: httpTask)
-        
-        if requestDelegates.isEmpty {
-            createURLSessionTask(httpTask: httpTask, with: urlRequest, startTaskManually: startTaskManually)
-        } else {
-            var counter = 0
-            
-            for requestDelegate in requestDelegates {
-                requestDelegate.didCreateRequest(urlRequest: urlRequest) { () in
-                    // TODO use alternative of OSAtomicIncrement32(&value)
-                    doThreadSafe {
-                        counter += 1
-                    }
-                
-                    if counter == requestDelegates.count {
-                        createURLSessionTask(httpTask: httpTask, with: urlRequest, startTaskManually: startTaskManually)
-                        os_log("HTTPTask with URLSessionTask was created.", log: customLog, type: .info)
-                    }
-                }
-            }
-        }
+        os_log("HTTPTask with URLSessionTask was created.", log: customLog, type: .info)
+        prepareTaskForStart(httpTask: httpTask, startTaskManually: startTaskManually)
         return httpTask
     }
     
@@ -117,6 +98,33 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
         if let index = requestDelegates.index(where: { $0 === requestDelegate }) {
             doThreadSafe {
                 requestDelegates.remove(at: index)
+            }
+        }
+    }
+    
+    /**
+     
+     - Parameter httpTask:
+     - Parameter startTaskManually:
+     
+     */
+    private func prepareTaskForStart(httpTask: HTTPTaskConcrete, startTaskManually: Bool) {
+        if requestDelegates.isEmpty {
+            createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
+        } else {
+            var counter = 0
+            
+            for requestDelegate in requestDelegates {
+                requestDelegate.didCreateRequest(httpTask: httpTask) { () in
+                    // TODO use alternative of OSAtomicIncrement32(&value)
+                    doThreadSafe {
+                        counter += 1
+                    }
+                    
+                    if counter == requestDelegates.count {
+                        createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
+                    }
+                }
             }
         }
     }
@@ -212,10 +220,12 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      - Parameter startTaskManually: If set true the task needs to be resumed manually after calling this method. If set false the task will be resumed automatically in this function.
      - Parameter priority: The priority the task will be executed with. If not set URLSessionTask.defaultPriority will be set.
      */
-    private func createURLSessionTask(httpTask: HTTPTaskConcrete, with urlRequest: URLRequest, startTaskManually: Bool, priority: Float = URLSessionTask.defaultPriority) {
-        let urlSessionTask = urlSession.dataTask(with: urlRequest)
+    private func createURLSessionTask(httpTask: HTTPTaskConcrete, startTaskManually: Bool, priority: Float = URLSessionTask.defaultPriority) {
+        let urlSessionTask = urlSession.dataTask(with: httpTask.urlRequest)
         urlSessionTask.priority = priority
         httpTask.urlSessionTask = urlSessionTask
+        
+        os_log("URLSessionTask was created.", log: customLog, type: .info)
         
         if !startTaskManually {
             httpTask.resume()
@@ -287,7 +297,8 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
                 
                 if counter == requestDelegates.count {
                     if retry {
-                        retryRequest(httpTask: httpTask)
+                        os_log("Request should be retried: %@", log: customLog, type: .info, httpTask.urlRequest.url?.absoluteString ?? "URL cannot be accessed")
+                        prepareTaskForStart(httpTask: httpTask, startTaskManually: false) // TODO remove startTaskManually when default is changed to false
                     } else {
                         complete(httpTask: httpTask, error: error)
                     }
@@ -295,22 +306,6 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
             }
         }
         
-    }
-    
-    /**
-     Retries a request of the given task. The new task will be saved in the HTTP task and replace the task executed before and is automatically resumed. 
-     - Parameter httpTask: The HTTP task object that contains the URL session task to be retried.
-     */
-    private func retryRequest(httpTask: HTTPTaskConcrete) {
-        /// get the request the task was executed with
-        guard let task = httpTask.urlSessionTask, let request = task.originalRequest ?? task.currentRequest else {
-            os_log("Original or current URLRequest of URLSessionTask with taskIdentifier %d was not found. Cannot create a new task to retry!", log: customLog, type: .error, httpTask.taskIdentifier ?? -1)
-            complete(httpTask: httpTask, error: HTTPHelper.genericError)
-            return
-        }
-        
-        os_log("Request should be retried: %@", log: customLog, type: .info, request.url?.absoluteString ?? "URL cannot be accessed")
-        createURLSessionTask(httpTask: httpTask, with: request, startTaskManually: false, priority: task.priority)
     }
     
     /**

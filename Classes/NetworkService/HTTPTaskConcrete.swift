@@ -28,6 +28,8 @@ public class HTTPTaskConcrete: HTTPTask {
         }
     }
     
+    public var urlRequest: URLRequest // TODO
+    
     /// Identifier of the currently stored URL session task.
     /// Not a identifier for the HTTP task object itself.
     public var taskIdentifier: Int? {
@@ -64,7 +66,8 @@ public class HTTPTaskConcrete: HTTPTask {
      - Parameter task: The created URLSesssion task. Optional parameter, can also be set later.
      - Parameter completionHandler: The completion handler that should be called when the task is completed. Takes the response as parameter or an error.
      */
-    public init(task: URLSessionTask? = nil, completionHandler: @escaping NetworkCompletionHandler) {
+    public init(urlRequest: URLRequest, task: URLSessionTask? = nil, completionHandler: @escaping NetworkCompletionHandler) {
+        self.urlRequest = urlRequest
         self.completionHandler = completionHandler
         self.urlSessionTask = task
         

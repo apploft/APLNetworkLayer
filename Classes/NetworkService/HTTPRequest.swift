@@ -19,7 +19,7 @@ public enum HttpRequestMethod: String {
 }
 
 /// A protocol for a HTTP request. 
-public protocol HTTPRequest {
+public protocol HTTPRequest: class {
     
     /// Absolute URL of the request.
     var url: URL { get }

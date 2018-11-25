@@ -32,6 +32,8 @@ public protocol HTTPTaskActions: class {
 public protocol HTTPTaskStateInfo: class {
     /// The current state of the task which can be running, suspended, in the process of being canceled, completed or pending.
     func getState() -> HTTPTaskState
+    
+    var urlRequest: URLRequest { get }
 }
 
 public protocol HTTPTaskPriority: class {

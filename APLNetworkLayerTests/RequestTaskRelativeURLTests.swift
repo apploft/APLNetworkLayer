@@ -50,7 +50,7 @@ class RequestTaskRelativeURLTests: XCTestCase {
                 XCTFail("Error: \(error)")
             }
         }
-        task.resume();
+        task.resume()
     }
 
     override func tearDown() {

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents an HTTP request and implements the HTTPRequestProtocol. It provides a property to create an URLRequest. 
-public struct HTTPRequestConcrete: HTTPRequest {
+public class HTTPRequestConcrete: HTTPRequest {
     
     public var url: URL
     public var method: HttpRequestMethod
