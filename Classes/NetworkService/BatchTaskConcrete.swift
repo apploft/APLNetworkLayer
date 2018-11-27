@@ -72,9 +72,8 @@ public class BatchTaskConcrete: BatchTask {
     /// Completion handler which will be executed after all tasks are completed.
     private let completionHandler: BatchTaskCompletionHandler
     
-    /// Logging subsystem for custom logging
-    private static let logSubsystem = "de.apploft.networkapp.BatchRequestConcrete"
-    private static let customLog = OSLog(subsystem: logSubsystem, category: "BatchRequest")
+    /// OSLog for custom logging
+    private static let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.BatchRequest")
     
     /// Recursive lock for executing code thread safe.
     private var recursiveLock = NSRecursiveLock()

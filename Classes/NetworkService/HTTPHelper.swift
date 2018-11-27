@@ -23,7 +23,7 @@ public struct HTTPHelper {
     public static let DefaultRequestTimeout: TimeInterval = 60.0
     
     /// Error domain for custom created errors.
-    public static let ErrorDomain: String = "de.apploft.network"
+    public static let ErrorDomain: String = "de.apploft.networklayer"
     
     /// Creates a generic Error with a generic error code and description to use for unknown errors.
     public static var genericError: Error {
@@ -44,5 +44,8 @@ public struct HTTPHelper {
         }
         return val
     }
+    
+    /// Logging subsystem for custom logging
+    static let LogSubsystem = "de.apploft.networklayer"
     
 }

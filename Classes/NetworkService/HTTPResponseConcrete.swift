@@ -49,7 +49,6 @@ public class HTTPResponseConcrete: HTTPResponse {
     // MARK: - PRIVATE
     //
     
-    /// Logging subsystem for custom logging
-    private static let logSubsystem = "de.apploft.networkapp.HTTPResponseConcrete"
-    private let customLog = OSLog(subsystem: logSubsystem, category: "Response")
+    /// OSLog for custom logging
+    private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.HTTPResponse")
 }

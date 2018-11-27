@@ -144,9 +144,8 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
     // MARK: PRIVATE
     //
     
-    /// Logging subsystem for custom logging
-    private static let logSubsystem = "de.apploft.network.ClientConfiguration"
-    private static let customLog = OSLog(subsystem: logSubsystem, category: "Configuration")
+    /// OSLog for custom logging
+    private static let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.ClientConfiguration")
     
     /**
      Creates a language header of the preferred languages set by the user in the iOS device. Does not add the header if there is already a accept-language header set.

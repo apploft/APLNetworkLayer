@@ -146,9 +146,8 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     /// Array of request delegates which are called before the request is executed and when the result is handled.
     private var requestDelegates = [RequestDelegate]()
     
-    /// Logging subsystem for custom logging
-    private static let logSubsystem = "de.apploft.network.Client"
-    private let customLog = OSLog(subsystem: logSubsystem, category: "Client")
+    /// OSLog for custom logging
+    private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.Client")
     
     /**
      Executes a code block thread safe.

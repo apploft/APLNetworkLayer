@@ -8,9 +8,8 @@
 import Foundation
 import os
 
-/// Logging subsystem for custom logging
-private let logSubsystem = "de.apploft.networkapp.HTTPTaskConcrete"
-private let customLog = OSLog(subsystem: logSubsystem, category: "Task")
+/// OSLog for custom logging
+private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.HTTPTask")
 
 /// Handles a task and conforms to the HTTPTask protocol. Is a class because there would be problems
 /// with the variables of reference type being nil if it was a struct.
