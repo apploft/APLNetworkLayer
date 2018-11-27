@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "APLNetworkLayer"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "APLNetworkLayer is a convenient interface for Apple's network framework that provides commonly used features."
   
   s.description  = <<-DESC
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 
   s.author       = { "Christine Pühringer" => "christine.puehringer@apploft.de" }
 
-  s.platform     = :ios, "11.4"
+  s.platform     = :ios, "11.0"
 
   s.source       = { :git => "https://github.com/apploft/APLNetworkLayer.git", :tag => "#{s.version}" }
 

@@ -57,11 +57,11 @@ Once the client has been created it can be used to create and execute HTTP reque
 ```swift
 guard let request = httpClient.GETRequest(relativeUrl: relativeUrl) else {
     let error = NSError(domain: "GetRequest", code: 0, userInfo: ["description": "Could not create get request with relative url \(relativeUrl)."])
-    completion(Result.failure(error))
+    completion(HTTPResult.failure(error))
     return
 }
  
-let task = httpClient.createHTTPTask(urlRequest: request.urlRequest) { [weak self] (result: APLNetworkLayer.Result<HTTPResponse>) in
+let task = httpClient.createHTTPTask(urlRequest: request.urlRequest) { [weak self] (result: APLNetworkLayer.HTTPResult<HTTPResponse>) in
     switch result {
     case .success(let httpResponse):
         self?.handleSuccess(httpResponse: httpResponse, completion: completion)
@@ -69,14 +69,12 @@ let task = httpClient.createHTTPTask(urlRequest: request.urlRequest) { [weak sel
         completion(Result.failure(error))
     }
 }
-        
-task.resume()
 ```
 
 Or create and execute the request at once: 
 
 ```swift
-let task = httpClient.GET(relativeUrl: relativeUrl) { [weak self] (result: APLNetworkLayer.Result<HTTPResponse>) in
+let task = httpClient.GET(relativeUrl: relativeUrl) { [weak self] (result: APLNetworkLayer.HTTPResult<HTTPResponse>) in
     switch result {
     case .success(let httpResponse):
         self?.handleSuccess(httpResponse: httpResponse, completion: completion)
@@ -84,8 +82,6 @@ let task = httpClient.GET(relativeUrl: relativeUrl) { [weak self] (result: APLNe
         completion(Result.failure(error))
     }
 }
-        
-task.resume()
 ```
 
 This can also be done with absolute URLs and different types of requests. You are able to fully configure all parameters of the client configuration and the requests.
