@@ -106,7 +106,7 @@ public class HTTPTaskConcrete: HTTPTask {
      - Parameter data: Data that has been transmitted
      */
     public func didReceiveData(data: Data) {
-        os_log("Task with taskIdentifier %d did receive data", log: customLog, type: .info, urlSessionTask?.taskIdentifier ?? -1)
+//        os_log("Task with taskIdentifier %d did receive data", log: customLog, type: .info, urlSessionTask?.taskIdentifier ?? -1)
         
         guard httpResponse != nil else {
             let message: StaticString = "Request completed without network errors but something went wrong, we didn't get a HTTPResponse!"
