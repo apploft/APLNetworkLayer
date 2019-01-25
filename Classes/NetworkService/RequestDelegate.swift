@@ -14,7 +14,7 @@ public protocol RequestDelegate: class {
      Is executed before the URL request is executed in the HTTPClient. Call completion handler to proceed. 
      - Parameter urlRequest: The URL request that will be executed in the HTTPClient.
      */
-    func didCreateRequest(httpTask: HTTPTask,  completionHandler: () -> Void)
+    func didCreateRequest(httpTask: HTTPTask,  completionHandler: @escaping () -> Void)
     
     /**
      Is executed when the HTTPClient has received the result of the request before it is processed. Implement what needs to be executed or checked before the result is processed.
@@ -23,6 +23,6 @@ public protocol RequestDelegate: class {
      - Parameter completionHandler: A completion handler that is executed on the bool result of wheter to retry the request or not.
      - Returns: Return wheter to retry the request or not.
      */
-    func didCompleteRequest(httpResponse: HTTPResponse?, error: Error?, completionHandler: (Bool) -> Void)
+    func didCompleteRequest(httpResponse: HTTPResponse?, error: Error?, completionHandler: @escaping (Bool) -> Void)
     
 }

@@ -117,12 +117,12 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
             for requestDelegate in httpTask.requestDelegates {
                 requestDelegate.didCreateRequest(httpTask: httpTask) { () in
                     // TODO use alternative of OSAtomicIncrement32(&value)
-                    doThreadSafe {
+                    self.doThreadSafe {
                         counter += 1
                     }
                     
                     if counter == httpTask.requestDelegates.count {
-                        createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
+                        self.createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
                     }
                 }
             }
@@ -287,19 +287,19 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         for requestDelegate in httpTask.requestDelegates {
             requestDelegate.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
                 // TODO use alternative of OSAtomicIncrement32(&value)
-                doThreadSafe {
+                self.doThreadSafe {
                     counter += 1
                 }
-                if shouldRetry && httpTask.retryCounter < maxRetries {
+                if shouldRetry && httpTask.retryCounter < self.maxRetries {
                     retry = true
                 }
                 
                 if counter == httpTask.requestDelegates.count {
                     if retry {
-                        os_log("Request should be retried: %@", log: customLog, type: .info, httpTask.urlRequest.url?.absoluteString ?? "URL cannot be accessed")
-                        prepareTaskForStart(httpTask: httpTask)
+                        os_log("Request should be retried: %@", log: self.customLog, type: .info, httpTask.urlRequest.url?.absoluteString ?? "URL cannot be accessed")
+                        self.prepareTaskForStart(httpTask: httpTask)
                     } else {
-                        complete(httpTask: httpTask, error: error)
+                        self.complete(httpTask: httpTask, error: error)
                     }
                 }
             }
