@@ -83,7 +83,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = false, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
         let httpTask = HTTPTaskConcrete(urlRequest: urlRequest, requestDelegate: requestDelegate, completionHandler: completionHandler)
         addTaskThreadSafe(httpTask: httpTask)
-        os_log("HTTPTask with URLSessionTask was created.", log: customLog, type: .info)
+        os_log("HTTPTask was created.", log: customLog, type: .info)
         prepareTaskForStart(httpTask: httpTask, startTaskManually: startTaskManually)
         return httpTask
     }
@@ -104,7 +104,8 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      */
     private func prepareTaskForStart(httpTask: HTTPTaskConcrete, startTaskManually: Bool = false) {
         if let requestDelegate = httpTask.requestDelegate {
-            requestDelegate.didCreateRequest(httpTask: httpTask) { () in
+            requestDelegate.didCreateRequest(urlRequest: httpTask.urlRequest) { request in
+                httpTask.urlRequest = request
                 self.createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
             }
         } else {
@@ -112,7 +113,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
         }
     }
     
-
+    
     //
     // MARK: - PRIVATE
     //
@@ -120,7 +121,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     /// A HTTPClientConfiguration object to store the configuration and settings for the HTTPClient.
     private let httpClientConfiguration: HTTPClientConfiguration
     
-    /// A URLSession object to handle communication with a server. Lazy because it uses the HTTPClient itself as a delegate which has to be initialized before. 
+    /// A URLSession object to handle communication with a server. Lazy because it uses the HTTPClient itself as a delegate which has to be initialized before.
     private lazy var urlSession: URLSession = URLSession(configuration: self.httpClientConfiguration.urlSessionConfiguration, delegate: self, delegateQueue: nil)
     
     /// An array of http tasks which are currently in use (running, suspended, retried etc) and not completed yet.
@@ -217,12 +218,12 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
 }
 
 
-// MARK: - URL Session Delegate 
+// MARK: - URL Session Delegate
 
 /// HTTPClient serves as URLSessionDataDelegate
 extension HTTPClientConcrete: URLSessionDataDelegate {
     
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {            
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         guard let httpTask = getTaskThreadSafe(taskIdentifier: dataTask.taskIdentifier) else {
             
             let message: StaticString = "Problem in didReceiveResponse: HTTP Task is nil and contained URLSessionTask with taskIdentifier %d was not found! Task will be canceled."
@@ -246,11 +247,11 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
             assertionFailure(String(format: message.description, dataTask.taskIdentifier))
             return
         }
-
+        
         httpTask.didReceiveData(data: data)
     }
     
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) { 
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let httpTask = getTaskThreadSafe(taskIdentifier: task.taskIdentifier) else {
             
             let message: StaticString = "Problem in didCompleteWithError: HTTP Task is nil and contained URLSessionTask with taskIdentifier %d was not found! Task will be canceled."

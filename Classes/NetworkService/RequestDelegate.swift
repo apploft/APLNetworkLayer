@@ -11,10 +11,11 @@ import Foundation
 public protocol RequestDelegate: class {
     
     /**
-     Is executed before the URL request is executed in the HTTPClient. Call completion handler to proceed. 
+     Is executed before the URL request is executed in the HTTPClient. Call completion handler to proceed.
      - Parameter urlRequest: The URL request that will be executed in the HTTPClient.
+     - Parameter completionHandler: return a new request or the original request if no changes should be applied.
      */
-    func didCreateRequest(httpTask: HTTPTask,  completionHandler: @escaping () -> Void)
+    func didCreateRequest(urlRequest: URLRequest,  completionHandler: @escaping (URLRequest) -> Void)
     
     /**
      Is executed when the HTTPClient has received the result of the request before it is processed. Implement what needs to be executed or checked before the result is processed.

@@ -29,7 +29,7 @@ public class HTTPTaskConcrete: HTTPTask {
     
     public var urlRequest: URLRequest // TODO
     
-     /// Request delegate that is called before the request is executed and when the result is handled. Is bound to the task once the task has been created. 
+    /// Request delegate that is called before the request is executed and when the result is handled. Is bound to the task once the task has been created.
     public var requestDelegate: RequestDelegate?
     
     /// Identifier of the currently stored URL session task.
@@ -125,7 +125,7 @@ public class HTTPTaskConcrete: HTTPTask {
     
     /**
      Handles the task when completed and an eventually appearing error.
-     - Parameter error: An Error object if the task was completed with an error. 
+     - Parameter error: An Error object if the task was completed with an error.
      */
     public func didCompleteWithError(error: Error?) {
         if let error = error {
