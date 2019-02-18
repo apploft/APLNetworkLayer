@@ -30,8 +30,6 @@
 		829BC98621637FB800E188B9 /* HTTPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E17BF2212D9E9600AE9D38 /* HTTPResponse.swift */; };
 		829BC98721637FB800E188B9 /* HTTPResponseConcrete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E17BF4212D9EA400AE9D38 /* HTTPResponseConcrete.swift */; };
 		829BC98821637FB800E188B9 /* RequestDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82560AD121352B910059042F /* RequestDelegate.swift */; };
-		829BC98921637FB800E188B9 /* BatchTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D205A32146C5B100B64B33 /* BatchTask.swift */; };
-		829BC98A21637FB800E188B9 /* BatchTaskConcrete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D205A62146C5E300B64B33 /* BatchTaskConcrete.swift */; };
 		829BC98B21637FBE00E188B9 /* NetworkReachabilityObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82752E602154D0E7003C6C29 /* NetworkReachabilityObserver.swift */; };
 		829BC98C21637FBE00E188B9 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82752E632154D2C0003C6C29 /* NetworkReachability.swift */; };
 		829BC98D21637FC100E188B9 /* NetworkReachabilityImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 82752E5D2154D0B8003C6C29 /* NetworkReachabilityImpl.m */; };
@@ -75,8 +73,6 @@
 		827C89B621511F9400324B30 /* ConvenienceRequestExecuting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvenienceRequestExecuting.swift; sourceTree = "<group>"; };
 		829BC95C21637F2800E188B9 /* APLNetworkLayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = APLNetworkLayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		829BC96421637F2900E188B9 /* APLNetworkLayerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APLNetworkLayerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		82D205A32146C5B100B64B33 /* BatchTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchTask.swift; sourceTree = "<group>"; };
-		82D205A62146C5E300B64B33 /* BatchTaskConcrete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchTaskConcrete.swift; sourceTree = "<group>"; };
 		82E17BF2212D9E9600AE9D38 /* HTTPResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponse.swift; sourceTree = "<group>"; };
 		82E17BF4212D9EA400AE9D38 /* HTTPResponseConcrete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponseConcrete.swift; sourceTree = "<group>"; };
 		82E78CCC2167893900C44C4E /* RequestTaskAbsoluteURLTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestTaskAbsoluteURLTasks.swift; sourceTree = "<group>"; };
@@ -208,8 +204,6 @@
 				82E17BF2212D9E9600AE9D38 /* HTTPResponse.swift */,
 				82E17BF4212D9EA400AE9D38 /* HTTPResponseConcrete.swift */,
 				82560AD121352B910059042F /* RequestDelegate.swift */,
-				82D205A32146C5B100B64B33 /* BatchTask.swift */,
-				82D205A62146C5E300B64B33 /* BatchTaskConcrete.swift */,
 			);
 			path = NetworkService;
 			sourceTree = "<group>";
@@ -345,8 +339,6 @@
 				829BC98621637FB800E188B9 /* HTTPResponse.swift in Sources */,
 				829BC98721637FB800E188B9 /* HTTPResponseConcrete.swift in Sources */,
 				829BC98821637FB800E188B9 /* RequestDelegate.swift in Sources */,
-				829BC98921637FB800E188B9 /* BatchTask.swift in Sources */,
-				829BC98A21637FB800E188B9 /* BatchTaskConcrete.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
