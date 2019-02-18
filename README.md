@@ -9,7 +9,6 @@ List of features of the APLNetworkLayer:
 
 - [x] Requests can be created with a base URL + relative URL or an absolute URL 
 - [x] Create different types of requests: GET, POST, PUT, DELETE
-- [x] Batch requests
 - [x] Set a global request timeout or a specific timeout for individual requests
 - [x] Built with interfaces to be mockable for testing
 - [x] Accept-Language header is created of the preferred languages of the device by default
