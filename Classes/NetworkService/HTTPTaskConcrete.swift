@@ -29,7 +29,8 @@ public class HTTPTaskConcrete: HTTPTask {
     
     public var urlRequest: URLRequest // TODO
     
-    public var requestDelegates: [RequestDelegate]
+     /// Request delegate that is called before the request is executed and when the result is handled. Is bound to the task once the task has been created. 
+    public var requestDelegate: RequestDelegate?
     
     /// Identifier of the currently stored URL session task.
     /// Not a identifier for the HTTP task object itself.
@@ -67,11 +68,11 @@ public class HTTPTaskConcrete: HTTPTask {
      - Parameter task: The created URLSesssion task. Optional parameter, can also be set later.
      - Parameter completionHandler: The completion handler that should be called when the task is completed. Takes the response as parameter or an error.
      */
-    public init(urlRequest: URLRequest, task: URLSessionTask? = nil, requestDelegates: [RequestDelegate] = [], completionHandler: @escaping NetworkCompletionHandler) {
+    public init(urlRequest: URLRequest, task: URLSessionTask? = nil, requestDelegate: RequestDelegate? = nil, completionHandler: @escaping NetworkCompletionHandler) {
         self.urlRequest = urlRequest
         self.completionHandler = completionHandler
         self.urlSessionTask = task
-        self.requestDelegates = requestDelegates
+        self.requestDelegate = requestDelegate
         
         if let urlSessionTask = self.urlSessionTask {
             state = URLSessionTaskState(urlSessionTask: urlSessionTask)

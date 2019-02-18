@@ -81,25 +81,19 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      - Returns: A task object that implements the Task Protocol.
      */
     public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = false, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
-        let httpTask = HTTPTaskConcrete(urlRequest: urlRequest, requestDelegates: requestDelegates, completionHandler: completionHandler)
+        let httpTask = HTTPTaskConcrete(urlRequest: urlRequest, requestDelegate: requestDelegate, completionHandler: completionHandler)
         addTaskThreadSafe(httpTask: httpTask)
         os_log("HTTPTask with URLSessionTask was created.", log: customLog, type: .info)
         prepareTaskForStart(httpTask: httpTask, startTaskManually: startTaskManually)
         return httpTask
     }
     
-    public func addRequestDelegate(requestDelegate: RequestDelegate) {
-        doThreadSafe {
-            requestDelegates.append(requestDelegate)
-        }
+    public func setRequestDelegate(requestDelegate: RequestDelegate) {
+        self.requestDelegate = requestDelegate
     }
     
-    public func removeRequestDelegate(requestDelegate: RequestDelegate) {
-        if let index = requestDelegates.index(where: { $0 === requestDelegate }) {
-            doThreadSafe {
-                requestDelegates.remove(at: index)
-            }
-        }
+    public func removeRequestDelegate() {
+        requestDelegate = nil
     }
     
     /**
@@ -109,23 +103,12 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      
      */
     private func prepareTaskForStart(httpTask: HTTPTaskConcrete, startTaskManually: Bool = false) {
-        if httpTask.requestDelegates.isEmpty {
-            createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
-        } else {
-            var counter = 0
-            
-            for requestDelegate in httpTask.requestDelegates {
-                requestDelegate.didCreateRequest(httpTask: httpTask) { () in
-                    // TODO use alternative of OSAtomicIncrement32(&value)
-                    self.doThreadSafe {
-                        counter += 1
-                    }
-                    
-                    if counter == httpTask.requestDelegates.count {
-                        self.createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
-                    }
-                }
+        if let requestDelegate = httpTask.requestDelegate {
+            requestDelegate.didCreateRequest(httpTask: httpTask) { () in
+                self.createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
             }
+        } else {
+            createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
         }
     }
     
@@ -143,8 +126,8 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     /// An array of http tasks which are currently in use (running, suspended, retried etc) and not completed yet.
     private var httpTasks = [HTTPTaskConcrete]()
     
-    /// Array of request delegates which are called before the request is executed and when the result is handled.
-    private var requestDelegates = [RequestDelegate]()
+    /// Request delegate that is called before the request is executed and when the result is handled. Is used as parameter for the created tasks and therefor bound to the task once created.
+    private var requestDelegate: RequestDelegate?
     
     /// OSLog for custom logging
     private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.Client")
@@ -278,33 +261,18 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         
         httpTask.retryCounter += 1
         
-        if (httpTask.requestDelegates.isEmpty) {
-            complete(httpTask: httpTask, error: error)
-            return
-        }
-        var retry = false
-        var counter = 0
-        for requestDelegate in httpTask.requestDelegates {
+        if let requestDelegate = httpTask.requestDelegate {
             requestDelegate.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
-                // TODO use alternative of OSAtomicIncrement32(&value)
-                self.doThreadSafe {
-                    counter += 1
-                }
                 if shouldRetry && httpTask.retryCounter < self.maxRetries {
-                    retry = true
-                }
-                
-                if counter == httpTask.requestDelegates.count {
-                    if retry {
-                        os_log("Request should be retried: %@", log: self.customLog, type: .info, httpTask.urlRequest.url?.absoluteString ?? "URL cannot be accessed")
-                        self.prepareTaskForStart(httpTask: httpTask)
-                    } else {
-                        self.complete(httpTask: httpTask, error: error)
-                    }
+                    os_log("Request should be retried: %@", log: self.customLog, type: .info, httpTask.urlRequest.url?.absoluteString ?? "URL cannot be accessed")
+                    self.prepareTaskForStart(httpTask: httpTask)
+                } else {
+                    self.complete(httpTask: httpTask, error: error)
                 }
             }
+        } else {
+            complete(httpTask: httpTask, error: error)
         }
-        
     }
     
     /**

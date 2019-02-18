@@ -75,16 +75,15 @@ public protocol HTTPClientCore: class {
     func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask
     
     /**
-     Adds a request delegate. Will be executed before the task is created and when the request is completed before the result is handled.
+     Sets the request delegate. Will be executed before the task is created and when the request is completed before the result is handled.
      - Parameter requestDelegate: An object that conforms to the RequestDelegate protocol.
      */
-    func addRequestDelegate(requestDelegate: RequestDelegate)
+    func setRequestDelegate(requestDelegate: RequestDelegate)
     
     /**
-     Removes a request delegate. Will not be executed anymore.
-     - Parameter requestDelegate: An object that conforms to the RequestDelegate protocol.
+     Removes the request delegate. Will not be executed anymore for all tasks started after removal.
      */
-    func removeRequestDelegate(requestDelegate: RequestDelegate)
+    func removeRequestDelegate()
     
 }
 
