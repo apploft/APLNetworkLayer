@@ -22,7 +22,7 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
      - Parameter requestTimeout: A timeout value in seconds that will be set for every request and is relevant when the request is executed. Not the request timeout value of the session! Optional parameter. A default value is set if not provided.
     */
     public init?(baseURL: URL? = nil,  urlSessionConfiguration: URLSessionConfiguration,
-                 requestTimeout: TimeInterval = HTTPHelper.DefaultTimeoutForRequestQueue) {
+                 requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout) {
         
         if let url = baseURL {
             guard HTTPClientConfigurationConcrete.isAcceptedURL(url: url) else {
@@ -59,7 +59,7 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
         let urlSessionConfiguration = URLSessionConfiguration.default
         
         /// Set a timeout value starting when the task of the request is queued in the session with resume(). Not the task timeout itself. 
-        urlSessionConfiguration.timeoutIntervalForRequest = HTTPHelper.DefaultTimeoutForRequestQueue
+        urlSessionConfiguration.timeoutIntervalForRequest = HTTPHelper.URLSessionConfigDefaultTimeoutForRequestQueue
         
         urlSessionConfiguration.httpAdditionalHeaders = defaultHeader
         urlSessionConfiguration.allowsCellularAccess = allowsCellularAccess

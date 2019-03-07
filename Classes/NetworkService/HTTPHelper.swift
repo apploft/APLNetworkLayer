@@ -16,8 +16,8 @@ public struct HTTPHelper {
     /// A generic error description to create a generic error.
     public static let GenericLocalizedErrorDescription: String = "An unknown error occurred"
     
-    /// The default value for the timeout of the session configuration for the requests, which starts once resume() has been executed and the request has been put in the queue, not the actual execution of the request.
-    public static let DefaultTimeoutForRequestQueue: TimeInterval = 360.0
+    /// The default value for the timeout of the session configuration for the requests, which starts once resume() has been executed and the request has been put in the queue, not the actual execution of the request. Set to 1 hour. 
+    public static let URLSessionConfigDefaultTimeoutForRequestQueue: TimeInterval = 3600.0
     
     /// Default timeout for the request for when the session task of the request is executed not queued.
     public static let DefaultRequestTimeout: TimeInterval = 60.0

@@ -29,7 +29,7 @@ public class HTTPFactory {
      - Parameter requestTimeout: A timeout value in seconds that will be set for every request and is relevant when the request is executed. Not the request timeout value of the session!
      - Returns: An HTTPClientConfiguration object. Can be nil if an invalid base URL is specified.
      */
-    public static func createConfiguration(baseURL: URL?,  urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.default, requestTimeout: TimeInterval = HTTPHelper.DefaultTimeoutForRequestQueue) -> HTTPClientConfiguration? {
+    public static func createConfiguration(baseURL: URL?,  urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.default, requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout) -> HTTPClientConfiguration? {
         return HTTPClientConfigurationConcrete(baseURL: baseURL,  urlSessionConfiguration: urlSessionConfiguration, requestTimeout: requestTimeout)
     }
     
