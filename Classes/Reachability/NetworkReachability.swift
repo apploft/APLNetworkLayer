@@ -46,7 +46,7 @@ public class NetworkReachability {
     
     fileprivate func stopObservationIfPossible() {
         guard observationStarted == true             else { return }
-        guard networkReachabilityObservers.count > 0 else { return }
+        guard networkReachabilityObservers.count == 0 else { return }
         
         reachability.stopNotifier()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.reachabilityChanged, object: nil)
