@@ -193,7 +193,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      - Returns: The index of the task if found in the array.
      */
     private func findTaskInArray(taskIdentifier: Int) -> Int? {
-        return httpTasks.index(where: { $0.taskIdentifier == taskIdentifier })
+        return httpTasks.firstIndex(where: { $0.taskIdentifier == taskIdentifier })
     }
     
     /**

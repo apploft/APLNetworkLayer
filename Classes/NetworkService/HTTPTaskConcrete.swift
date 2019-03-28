@@ -210,6 +210,11 @@ class URLSessionTaskState: URLSessionTaskStateAndPriority {
                 return HTTPTaskState.canceling
             case .completed:
                 return HTTPTaskState.completed
+            @unknown default:
+                os_log("URLSessionTask with taskIdentifier %d has unknown state. State pending is returned.",
+                       log: customLog,
+                       type: .info, urlSessionTask.taskIdentifier)
+                return HTTPTaskState.pending
             }
         }
         

@@ -83,7 +83,7 @@ public class NetworkReachability {
 
 fileprivate extension NetworkReachabilityObserver {
     
-    fileprivate func toOpaque() -> UnsafeMutableRawPointer {
+    func toOpaque() -> UnsafeMutableRawPointer {
         return Unmanaged.passUnretained(self as AnyObject).toOpaque()
     }
     
