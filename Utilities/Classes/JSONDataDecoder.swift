@@ -20,6 +20,13 @@ extension JSONDataDecoder {
 
 public class JSONDataDecoder {
     
+    private static let subsystem = "de.apploft.JSONDataDecoder"
+    private static let msgFileNotFound:StaticString = "File '%@.%@' not found"
+    private static let msgFileNotFoundWithoutExt:StaticString = "File '%@' not found"
+    private static let msgContentsOFUrlNotLoaded:StaticString = "Contents of URL '%@' could not be loaded"
+    private static let msgDataNotDecoded:StaticString = "Data could not be decoded"
+    
+    
     /**
      Creates an object of data type T, which contains data decoded from a data object.
      
@@ -38,8 +45,8 @@ public class JSONDataDecoder {
             let object = try decoder.decode(T.self, from: data)
             return object
         } catch {
-            let logger = OSLog(subsystem: "de.apploft.JSONDataDecoder", category:  "error");
-            os_log("Data could not be decoded", log: logger, type: .debug)
+            let logger = OSLog(subsystem: subsystem, category:  "error");
+            os_log(msgDataNotDecoded, log: logger, type: .debug)
             throw JSONDataDecoder.DecoderError.dataCouldNotBeDecoded
         }
     }
@@ -60,13 +67,14 @@ public class JSONDataDecoder {
             let urlComp = URLComponents(url: fileUrl, resolvingAgainstBaseURL: false)
             assert(urlComp?.scheme == "file")
         #endif
-        
+
         var data:Data
         do {
             data = try Data(contentsOf: fileUrl)
         } catch {
-            let logger = OSLog(subsystem: "de.apploft.JSONDataDecoder", category:  "error");
-            os_log("Contents of URL could not be loaded", log: logger, type: .debug)
+            let logger = OSLog(subsystem: subsystem, category:  "error");
+            os_log(msgContentsOFUrlNotLoaded ,log: logger, type: .debug, fileUrl.absoluteString)
+            
             throw JSONDataDecoder.DecoderError.contentsOfUrlCouldNotBeLoaded
         }
         
@@ -77,8 +85,8 @@ public class JSONDataDecoder {
             let object = try decoder.decode(T.self, from: data)
             return object
         } catch {
-            let logger = OSLog(subsystem: "de.apploft.JSONDataDecoder", category:  "error");
-            os_log("Data could not be decoded", log: logger, type: .debug)
+            let logger = OSLog(subsystem: subsystem, category:  "error");
+            os_log(msgDataNotDecoded, log: logger, type: .debug)
             throw JSONDataDecoder.DecoderError.dataCouldNotBeDecoded
         }
     }
@@ -101,8 +109,9 @@ public class JSONDataDecoder {
             do {
                 data = try Data(contentsOf: fileUrl)
             } catch {
-                let logger = OSLog(subsystem: "de.apploft.JSONDataDecoder", category:  "error");
-                os_log("Contents of URL could not be loaded", log: logger, type: .debug)
+                let logger = OSLog(subsystem: subsystem, category:  "error");
+                os_log(msgContentsOFUrlNotLoaded ,log: logger, type: .debug, fileUrl.absoluteString)
+                
                 throw JSONDataDecoder.DecoderError.contentsOfUrlCouldNotBeLoaded
             }
                 
@@ -113,14 +122,18 @@ public class JSONDataDecoder {
                 let object = try decoder.decode(T.self, from: data)
                 return object
             } catch {
-                let logger = OSLog(subsystem: "de.apploft.JSONDataDecoder", category:  "error");
-                os_log("Data could not be decoded", log: logger, type: .debug)
+                let logger = OSLog(subsystem: subsystem, category:  "error");
+                os_log(msgDataNotDecoded, log: logger, type: .debug)
                 throw JSONDataDecoder.DecoderError.dataCouldNotBeDecoded
             }
             
         } else {
-            let logger = OSLog(subsystem: "de.apploft.JSONDataDecoder", category:  "error");
-            os_log("File not found", log: logger, type: .debug)
+            let logger = OSLog(subsystem: subsystem, category:  "error");
+            if (fileExtension == nil) {
+                os_log(msgFileNotFoundWithoutExt, log: logger, type: .debug, "\(fileName)")
+            } else {
+                os_log(msgFileNotFound, log: logger, type: .debug, "\(fileName)", fileExtension!)
+            }
             throw JSONDataDecoder.DecoderError.fileNotFound
         }
     }

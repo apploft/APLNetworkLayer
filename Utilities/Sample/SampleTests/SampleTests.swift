@@ -29,11 +29,15 @@ class SampleTests: XCTestCase {
     func testDecodingJsonFromFile1() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        
+   
         // File exist and is ok
         var result:JSONData? = try? JSONDataDecoder.fromLocalFile(fileName: "json_simple", fileExtension: "json")
         print(result?.dataOne)
-      
+        
+        // File does not exist
+        result = try? JSONDataDecoder.fromLocalFile(fileName: "json_simpl", fileExtension: "json")
+     
+        
         // File exist and is ok
         result = try? JSONDataDecoder.fromLocalFile(fileName: "json_simple")
         print(result?.dataTwo)
@@ -72,7 +76,7 @@ class SampleTests: XCTestCase {
             }
         }
         
-        
+
         // File exist and is ok
         let fileUrl = Bundle.main.url(forResource: "json_simple", withExtension: "json")
         result = try? JSONDataDecoder.fromURL(fileUrl: fileUrl!)
@@ -81,8 +85,7 @@ class SampleTests: XCTestCase {
         // cause assertion
         //let url = URL(string: "wwww.apple.com")
         //result = try? JSONDataDecoder.fromURL(fileUrl: url!)
-        
-        
+ 
         do {
             let _:JSONData = try JSONDataDecoder.fromData(data: Data())!
         } catch let Error {
