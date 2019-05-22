@@ -26,4 +26,8 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
+  s.subspec 'JSONDataDecoder' do |sp|
+    sp.source_files = 'Utilities/Classes/**/*.{swift}'
+  end
+
 end
