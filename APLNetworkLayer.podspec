@@ -15,7 +15,10 @@ Pod::Spec.new do |s|
 
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
 
-  s.author       = { "Christine Pühringer" => "christine.puehringer@apploft.de" }
+  s.author       = { "Christine Pühringer" => "christine.puehringer@apploft.de",
+                     "Ahmet Akbal" => "ahmet.akbal@apploft.de" }
+  
+  s.swift_versions = ['4.0', '5.0']
 
   s.platform     = :ios, "11.0"
 
@@ -26,7 +29,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.subspec 'JSONDataDecoder' do |sp|
+  s.subspec 'Utilities' do |sp|
     sp.source_files = 'Utilities/Classes/**/*.{swift}'
   end
 

@@ -6,14 +6,13 @@ target 'Sample' do
   use_frameworks!
 
   # Pods for Sample
-  pod 'APLNetworkLayer/JSONDataDecoder', :path => '../../'
+  pod 'APLNetworkLayer/Utilities', :path => '../../'
   
   
   target 'SampleTests' do
      inherit! :search_paths
     # Pods for testing
-    pod 'APLNetworkLayer/JSONDataDecoder', :path => '../../'
-
+    pod 'APLNetworkLayer/Utilities', :path => '../../'
    end
 
 end
