@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "APLNetworkLayer"
-  s.version      = "0.1.0"
+  s.version      = "0.0.9"
   s.summary      = "APLNetworkLayer is a convenient interface for Apple's network framework that provides commonly used features."
   
   s.description  = <<-DESC
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   
   s.swift_versions = ['4.0', '5.0']
 
-  s.platform     = :ios, "10.0"
+  s.platform     = :ios, "11.0"
 
   s.source       = { :git => "https://github.com/apploft/APLNetworkLayer.git", :tag => s.version.to_s }
 
@@ -30,6 +30,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.subspec 'Utilities' do |sp|
+    sp.platform     = :ios, "10.0"
     sp.source_files = 'Utilities/Classes/**/*.{swift}'
   end
 
