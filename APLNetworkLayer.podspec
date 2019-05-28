@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   
   s.swift_versions = ['4.0', '5.0']
 
-  s.platform     = :ios, "11.0"
+  s.platform     = :ios, "10.0"
 
   s.source       = { :git => "https://github.com/apploft/APLNetworkLayer.git", :tag => s.version.to_s }
 
