@@ -50,6 +50,7 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
      - Parameter allowsCellularAccess: Set if in the session cellular access is allowed. Default value is true.
      - Parameter waitsForConnectivity: A Boolean value that indicates whether the session should wait for connectivity to become available, or fail immediately.Default value is true.
      */
+    @available(iOS 11.0, *)
     public convenience init?(baseURL: URL? = nil,
                              defaultHeader: HTTPHeaders? = [:],
                              requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout,
@@ -63,10 +64,7 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
         
         urlSessionConfiguration.httpAdditionalHeaders = defaultHeader
         urlSessionConfiguration.allowsCellularAccess = allowsCellularAccess
-        
-        if #available(iOS 11.0, *) {
-            urlSessionConfiguration.waitsForConnectivity = waitsForConnectivity
-        }
+        urlSessionConfiguration.waitsForConnectivity = waitsForConnectivity
         
         self.init(baseURL: baseURL, urlSessionConfiguration: urlSessionConfiguration, requestTimeout: requestTimeout)
     }
