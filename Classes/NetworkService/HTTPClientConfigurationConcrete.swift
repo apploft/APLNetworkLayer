@@ -8,6 +8,7 @@
 import Foundation
 import os
 
+@available(iOS 11.0, *)
 public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
     
     public private(set) var baseURL: URL?
@@ -50,7 +51,6 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
      - Parameter allowsCellularAccess: Set if in the session cellular access is allowed. Default value is true.
      - Parameter waitsForConnectivity: A Boolean value that indicates whether the session should wait for connectivity to become available, or fail immediately.Default value is true.
      */
-    @available(iOS 11.0, *)
     public convenience init?(baseURL: URL? = nil,
                              defaultHeader: HTTPHeaders? = [:],
                              requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout,
