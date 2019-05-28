@@ -8,7 +8,6 @@
 import Foundation
 import os
 
-@available(iOS 11.0, *)
 public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
     
     public private(set) var baseURL: URL?
@@ -64,7 +63,9 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
         
         urlSessionConfiguration.httpAdditionalHeaders = defaultHeader
         urlSessionConfiguration.allowsCellularAccess = allowsCellularAccess
-        urlSessionConfiguration.waitsForConnectivity = waitsForConnectivity
+        if #available(iOS 11.0, *) {
+            urlSessionConfiguration.waitsForConnectivity = waitsForConnectivity
+        }
         
         self.init(baseURL: baseURL, urlSessionConfiguration: urlSessionConfiguration, requestTimeout: requestTimeout)
     }
