@@ -7,6 +7,7 @@
 //
 import UIKit
 
+@available(iOSApplicationExtension, unavailable)
 public class NetworkActivityIndicator {
     
     private static var numberOfActivities = 0
