@@ -23,8 +23,8 @@ public class JSONDataDecoder {
     private static let subsystem = "de.apploft.JSONDataDecoder"
     private static let msgFileNotFound:StaticString = "File '%@.%@' not found"
     private static let msgFileNotFoundWithoutExt:StaticString = "File '%@' not found"
-    private static let msgContentsOfUrlNotLoaded:StaticString = "Contents of URL '%@' could not be loaded"
-    private static let msgDataNotDecoded:StaticString = "Data could not be decoded"
+    private static let msgContentsOfUrlNotLoaded:StaticString = "Contents of URL '%@' could not be loaded, error '%@'"
+    private static let msgDataNotDecoded:StaticString = "Data could not be decoded, error '%@'"
     
     
     /**
@@ -32,21 +32,24 @@ public class JSONDataDecoder {
      
      - Parameter data: Data object, which will be decoded
      - Parameter keyCodingStrategy: Key decoding strategy, e.g. convertFromSnakeCase or useDefaultKeys  (optional)
-     
+     - Parameter dateDecodingStrategy: Date decoding stategy for handling of date properties
+
      - Returns: Object of data type T containing decoded data
      */
     
-    public static func fromData<T: Decodable>(data: Data, keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase) throws -> T {
+    public static func fromData<T: Decodable>(data: Data, keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .iso8601) throws -> T {
         
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = keyCodingStrategy
-        
+        decoder.dateDecodingStrategy = dateDecodingStrategy
+
         do {
             let object = try decoder.decode(T.self, from: data)
             return object
-        } catch {
+        } catch let error {
             let logger = OSLog(subsystem: subsystem, category:  "error");
-            os_log(msgDataNotDecoded, log: logger, type: .debug)
+            let debugInfo = error as? CustomDebugStringConvertible
+            os_log(msgDataNotDecoded, log: logger, type: .debug, debugInfo?.debugDescription ?? error.localizedDescription)
             throw JSONDataDecoder.DecoderError.dataCouldNotBeDecoded
         }
     }
@@ -57,11 +60,12 @@ public class JSONDataDecoder {
      
      - Parameter fileUrl: URL object, whoose data will be decoded
      - Parameter keyCodingStrategy: Key decoding strategy, e.g. convertFromSnakeCase or useDefaultKeys (optional)
-     
+     - Parameter dateDecodingStrategy: Date decoding stategy for handling of date properties
+
      - Returns: Object of data type T containing decoded data
      */
     
-    public static func fromURL<T: Decodable>(fileUrl: URL, keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase) throws -> T {
+    public static func fromFileURL<T: Decodable>(_ fileUrl: URL, keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .iso8601) throws -> T {
         
         #if DEBUG
             let urlComp = URLComponents(url: fileUrl, resolvingAgainstBaseURL: false)
@@ -69,16 +73,17 @@ public class JSONDataDecoder {
         #endif
 
         var data:Data
+
         do {
             data = try Data(contentsOf: fileUrl)
-        } catch {
+        } catch let error {
             let logger = OSLog(subsystem: subsystem, category:  "error");
-            os_log(msgContentsOfUrlNotLoaded ,log: logger, type: .debug, fileUrl.absoluteString)
-            
+            let debugInfo = error as? CustomDebugStringConvertible
+            os_log(msgContentsOfUrlNotLoaded ,log: logger, type: .debug, fileUrl.absoluteString, debugInfo?.debugDescription ?? error.localizedDescription)
             throw JSONDataDecoder.DecoderError.contentsOfUrlCouldNotBeLoaded
         }
         
-        return try fromData(data: data)
+        return try fromData(data: data, keyCodingStrategy: keyCodingStrategy, dateDecodingStrategy: dateDecodingStrategy)
     }
     
     
@@ -88,14 +93,15 @@ public class JSONDataDecoder {
      - Parameter fileName: Name of the json file
      - Parameter fileExtension: Extension of json file
      - Parameter keyCodingStrategy: Key decoding strategy, e.g. convertFromSnakeCase or useDefaultKeys  (optional)
+     - Parameter dateDecodingStrategy: Date decoding stategy for handling of date properties
      
      - Returns: Object of data type T containing decoded data
      */
-    public static func fromLocalFile<T: Decodable>(fileName: StaticString, fileExtension: String? = "json", keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase) throws -> T {
+    public static func fromLocalFileNamed<T: Decodable>(_ fileName: StaticString, fileExtension: String? = "json", keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .iso8601) throws -> T {
         
         guard let fileUrl = Bundle.main.url(forResource: "\(fileName)", withExtension: fileExtension) else {
-            
             let logger = OSLog(subsystem: subsystem, category:  "error");
+
             if (fileExtension == nil) {
                 os_log(msgFileNotFoundWithoutExt, log: logger, type: .debug, "\(fileName)")
             } else {
@@ -103,8 +109,8 @@ public class JSONDataDecoder {
             }
             throw JSONDataDecoder.DecoderError.fileNotFound
         }
-        
-        return try fromURL(fileUrl: fileUrl)
+
+        return try fromFileURL(fileUrl, keyCodingStrategy: keyCodingStrategy, dateDecodingStrategy: dateDecodingStrategy)
     }
 
 }
