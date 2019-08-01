@@ -48,8 +48,8 @@ public class JSONDataDecoder {
             return object
         } catch let error {
             let logger = OSLog(subsystem: subsystem, category:  "error");
-            let debugInfo = error as? CustomDebugStringConvertible
-            os_log(msgDataNotDecoded, log: logger, type: .debug, debugInfo?.debugDescription ?? error.localizedDescription)
+            let debugInfo = error as CustomDebugStringConvertible
+            os_log(msgDataNotDecoded, log: logger, type: .debug, debugInfo.debugDescription )
             throw JSONDataDecoder.DecoderError.dataCouldNotBeDecoded
         }
     }
@@ -78,8 +78,8 @@ public class JSONDataDecoder {
             data = try Data(contentsOf: fileUrl)
         } catch let error {
             let logger = OSLog(subsystem: subsystem, category:  "error");
-            let debugInfo = error as? CustomDebugStringConvertible
-            os_log(msgContentsOfUrlNotLoaded ,log: logger, type: .debug, fileUrl.absoluteString, debugInfo?.debugDescription ?? error.localizedDescription)
+            let debugInfo = error as CustomDebugStringConvertible
+            os_log(msgContentsOfUrlNotLoaded ,log: logger, type: .debug, fileUrl.absoluteString, debugInfo.debugDescription)
             throw JSONDataDecoder.DecoderError.contentsOfUrlCouldNotBeLoaded
         }
         
