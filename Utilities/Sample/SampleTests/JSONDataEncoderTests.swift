@@ -27,7 +27,7 @@ class JSONDataEncoderTests: XCTestCase {
 
     func testJSONEncoder() {
         let modelObject = ModelObject(title: "Title", subtitle: "Subtitle")
-        let data = try? JSONDataEncoder.withObject(modelObject)
+        let data = try? JSONDataEncoder.encodeObject(modelObject)
 
         XCTAssertNotNil(data, "Data could not be encoded")
 
