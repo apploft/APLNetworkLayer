@@ -24,7 +24,7 @@ public class JSONDataEncoder {
     ///   - dateEncodingStrategy: date encoding strategy, default is 'iso8601'
     /// - Returns: a data representation of the provided model object
     /// - Throws: an error and logs an error to the error console
-    public static func encodeObject<T: Encodable>(_ object: T, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601) throws -> Data? {
+    public static func encodeObject<T: Encodable>(_ object: T, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601) throws -> Data {
         let jsonEncoder = JSONEncoder()
 
         jsonEncoder.keyEncodingStrategy = keyEncodingStrategy
