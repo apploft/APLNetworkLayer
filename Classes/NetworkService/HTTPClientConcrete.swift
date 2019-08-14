@@ -275,7 +275,14 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
             complete(httpTask: httpTask, error: error)
         }
     }
-    
+
+    // MARK: - Handling redirects
+
+    public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        // Just perform the redirect
+        completionHandler(request)
+    }
+
     /**
      Handles when the task is completed and will not be retried anymore.
      - Parameter httpTask: The task that has been completed.
