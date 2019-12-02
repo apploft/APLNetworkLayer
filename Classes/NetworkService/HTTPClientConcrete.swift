@@ -128,7 +128,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     private var httpTasks = [HTTPTaskConcrete]()
     
     /// Request delegate that is called before the request is executed and when the result is handled. Is used as parameter for the created tasks and therefor bound to the task once created.
-    private var requestDelegate: RequestDelegate?
+    private weak var requestDelegate: RequestDelegate?
     
     /// OSLog for custom logging
     private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.Client")
