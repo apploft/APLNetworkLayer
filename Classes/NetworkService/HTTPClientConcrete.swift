@@ -81,10 +81,10 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      - Returns: A task object that implements the Task Protocol.
      */
     public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = false, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
-        let httpTask = HTTPTaskConcrete(urlRequest: urlRequest, requestDelegate: requestDelegate, completionHandler: completionHandler)
+        let httpTask = HTTPTaskConcrete(urlRequest: urlRequest, completionHandler: completionHandler)
         addTaskThreadSafe(httpTask: httpTask)
         os_log("HTTPTask was created.", log: customLog, type: .info)
-        prepareTaskForStart(httpTask: httpTask, startTaskManually: startTaskManually)
+        prepareTaskForStart(httpTask: httpTask, requestDelegate: self.requestDelegate, startTaskManually: startTaskManually)
         return httpTask
     }
     
@@ -102,8 +102,8 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      - Parameter startTaskManually:
      
      */
-    private func prepareTaskForStart(httpTask: HTTPTaskConcrete, startTaskManually: Bool = false) {
-        if let requestDelegate = httpTask.requestDelegate {
+    private func prepareTaskForStart(httpTask: HTTPTaskConcrete, requestDelegate: RequestDelegate? = nil, startTaskManually: Bool = false) {
+        if let requestDelegate = requestDelegate {
             requestDelegate.didCreateRequest(urlRequest: httpTask.urlRequest) { request in
                 httpTask.urlRequest = request
                 self.createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
@@ -262,11 +262,11 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         
         httpTask.retryCounter += 1
         
-        if let requestDelegate = httpTask.requestDelegate {
+        if let requestDelegate = self.requestDelegate {
             requestDelegate.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
                 if shouldRetry && httpTask.retryCounter < self.maxRetries {
                     os_log("Request should be retried: %@", log: self.customLog, type: .info, httpTask.urlRequest.url?.absoluteString ?? "URL cannot be accessed")
-                    self.prepareTaskForStart(httpTask: httpTask)
+                    self.prepareTaskForStart(httpTask: httpTask, requestDelegate: self.requestDelegate)
                 } else {
                     self.complete(httpTask: httpTask, error: error)
                 }
