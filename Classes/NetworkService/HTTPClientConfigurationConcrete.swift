@@ -59,7 +59,11 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
         urlSessionConfiguration.timeoutIntervalForRequest = HTTPHelper.URLSessionConfigDefaultTimeoutForRequestQueue
         urlSessionConfiguration.allowsCellularAccess = allowsCellularAccess
         urlSessionConfiguration.waitsForConnectivity = waitsForConnectivity
-        urlSessionConfiguration.urlCache = objectCache
+
+        if objectCache != nil {
+            urlSessionConfiguration.urlCache = objectCache
+        }
+
         urlSessionConfiguration.requestCachePolicy = requestCachePolicy
 
         var defaultHeaders: HTTPHeaders = [HTTPHelper.AcceptLanguageHeaderKey: HTTPHelper.defaultAcceptLanguageHeaderValue]
