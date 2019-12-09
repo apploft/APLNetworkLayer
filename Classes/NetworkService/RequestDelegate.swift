@@ -25,5 +25,4 @@ public protocol RequestDelegate: class {
      - Returns: Return wheter to retry the request or not.
      */
     func didCompleteRequest(httpResponse: HTTPResponse?, error: Error?, completionHandler: @escaping (Bool) -> Void)
-    
 }

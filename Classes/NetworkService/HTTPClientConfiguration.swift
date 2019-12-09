@@ -18,7 +18,10 @@ public protocol HTTPClientConfiguration: class {
     
     /// The timeout interval that will be set in the requests. This is not the timeout interval set in the session configuration, which starts counting when the request is put in the queue and not actually executed. This variable sets the actual timeout of the request when it is executed.
     var requestTimeout: TimeInterval { get }
-        
+
+    /// An object level cache for response of 'GET' requests.
+    var objectCache: URLCache? { get }
+
     /**
      HTTPClientConfiguration serves as factory to create HTTP requests. Creates a request of a relative URL. Can only be used if base URL was provided.
      

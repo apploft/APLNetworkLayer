@@ -31,10 +31,10 @@ public struct HTTPHelper {
     }
     
     /// Key for the header containing the accepted and preferred languages.
-    public static let PreferredLanguagesKey: String = "Accept-Language"
+    public static let AcceptLanguageHeaderKey: String = "Accept-Language"
     
     /// Creates the string with preferred languages that are saved in the device for the accept-language header.
-    public static var acceptLanguageValue: String {
+    public static var defaultAcceptLanguageHeaderValue: String {
         let preferredLanguages = Locale.preferredLanguages
         var idx: Float = 0.0
         let val = preferredLanguages.reduce("") { (result, next) in

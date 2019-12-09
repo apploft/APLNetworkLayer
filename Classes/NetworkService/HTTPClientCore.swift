@@ -32,7 +32,15 @@ public protocol HTTPClientCore: class {
     
     /// Maximum number of retries per task that are executed.
     var maxRetries: Int { get set }
-    
+
+    /// Sets the request delegate. Will be executed before the task is created and when the request is completed before the result is handled.
+    //// - Parameter requestDelegate: An object that conforms to the RequestDelegate protocol.
+    var requestDelegate: RequestDelegate? { get set }
+
+    /// Set the delegate controlling the object caching behavior. If no delegate is set but an object cache
+    /// has been set, all responses of 'GET' requests will be cached on successful response.
+    var httpTaskDelegate: HTTPTaskDelegate? { get set }
+
     /**
      Creates an HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration, and the HTTP method, which can be chosen of an enum. Calls the request method of the HTTPClientConfiguration to build the request. Can only be used if a base URL was provided in the configuration, will fail otherwise.
      
@@ -73,18 +81,6 @@ public protocol HTTPClientCore: class {
      - Returns: A task object that implements the Task Protocol.
      */
     func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask
-    
-    /**
-     Sets the request delegate. Will be executed before the task is created and when the request is completed before the result is handled.
-     - Parameter requestDelegate: An object that conforms to the RequestDelegate protocol.
-     */
-    func setRequestDelegate(requestDelegate: RequestDelegate)
-    
-    /**
-     Removes the request delegate. Will not be executed anymore for all tasks started after removal.
-     */
-    func removeRequestDelegate()
-    
 }
 
 extension HTTPClientCore {

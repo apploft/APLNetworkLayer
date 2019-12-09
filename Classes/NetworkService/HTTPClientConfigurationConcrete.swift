@@ -9,20 +9,20 @@ import Foundation
 import os
 
 public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
-    
+    public private(set) var objectCache: URLCache?
     public private(set) var baseURL: URL?
     public private(set) var urlSessionConfiguration: URLSessionConfiguration
-    public private(set) var requestTimeout: TimeInterval
+    public private(set) var requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout
     
     /**
-     Initializer for the HTTPClientConfiguration object.
+     Initializer for the HTTPClientConfiguration object using a configured URLSessionConfiguration.
+     The caller is responsible to configure this session configuration accordingly as it will be
+     taken as is.
      
      - Parameter baseURL: The URL that is the base for the later built and executed requests when the relative URL is provided. Optional parameter, but requests cannot be created with a relative URL without a base URL.
      - Parameter urlSessionConfiguration: A URLSessionConfiguration object that stores settings for the session such as the use of cellular data. Use URLSessionConfiguration.default to create your own configuration instead of new to avoid InvalidArgumentExceptions when setting properties.
-     - Parameter requestTimeout: A timeout value in seconds that will be set for every request and is relevant when the request is executed. Not the request timeout value of the session! Optional parameter. A default value is set if not provided.
     */
-    public init?(baseURL: URL? = nil,  urlSessionConfiguration: URLSessionConfiguration,
-                 requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout) {
+    public init?(baseURL: URL?, urlSessionConfiguration: URLSessionConfiguration) {
         
         if let url = baseURL {
             guard HTTPClientConfigurationConcrete.isAcceptedURL(url: url) else {
@@ -31,14 +31,8 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
             }
             self.baseURL = url
         }
-        
+
         self.urlSessionConfiguration = urlSessionConfiguration
-        self.requestTimeout = requestTimeout
-        
-        /// Add header with preferred languages to additional headers
-        var headers = urlSessionConfiguration.httpAdditionalHeaders ?? [:]
-        createLanguageHeader(headers: &headers);
-        urlSessionConfiguration.httpAdditionalHeaders = headers
     }
     
     /**
@@ -49,23 +43,36 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
      - Parameter requestTimeout: A timeout value in seconds that will be set for every request and is relevant when the request is executed. Not the request timeout value of the session! Optional parameter. A default value is set if not provided.
      - Parameter allowsCellularAccess: Set if in the session cellular access is allowed. Default value is true.
      - Parameter waitsForConnectivity: A Boolean value that indicates whether the session should wait for connectivity to become available, or fail immediately.Default value is true.
+     - Paramter objectCache: A cache for object level caching.
+     - Parameter requestCachePolicy: Cache policy of the URL request. Default is useProtocolCachePolicy.
      */
-    public convenience init?(baseURL: URL? = nil,
-                             defaultHeader: HTTPHeaders? = [:],
-                             requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout,
-                             allowsCellularAccess: Bool = true,
-                             waitsForConnectivity: Bool = true) {
-        
+    public convenience init?(baseURL: URL?,
+                             defaultHeader: HTTPHeaders?,
+                             requestTimeout: TimeInterval,
+                             allowsCellularAccess: Bool,
+                             waitsForConnectivity: Bool,
+                             objectCache: URLCache?,
+                             requestCachePolicy: URLRequest.CachePolicy) {
         let urlSessionConfiguration = URLSessionConfiguration.default
         
         /// Set a timeout value starting when the task of the request is queued in the session with resume(). Not the task timeout itself. 
         urlSessionConfiguration.timeoutIntervalForRequest = HTTPHelper.URLSessionConfigDefaultTimeoutForRequestQueue
-        
-        urlSessionConfiguration.httpAdditionalHeaders = defaultHeader
         urlSessionConfiguration.allowsCellularAccess = allowsCellularAccess
         urlSessionConfiguration.waitsForConnectivity = waitsForConnectivity
-        
-        self.init(baseURL: baseURL, urlSessionConfiguration: urlSessionConfiguration, requestTimeout: requestTimeout)
+        urlSessionConfiguration.urlCache = objectCache
+        urlSessionConfiguration.requestCachePolicy = requestCachePolicy
+
+        var defaultHeaders: HTTPHeaders = [HTTPHelper.AcceptLanguageHeaderKey: HTTPHelper.defaultAcceptLanguageHeaderValue]
+
+        if let defaultHeader = defaultHeader {
+            defaultHeaders.merge(defaultHeader) { $1 }
+        }
+
+        urlSessionConfiguration.httpAdditionalHeaders = defaultHeaders
+
+        self.init(baseURL: baseURL, urlSessionConfiguration: urlSessionConfiguration)
+
+        self.requestTimeout = requestTimeout
     }
     
     /**
@@ -139,24 +146,13 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
         return HTTPRequestConcrete(url: absoluteUrl, method: method, queryParameters: queryParameters, headers: headers, body: body, cachePolicy: cachePolicy ?? .useProtocolCachePolicy, timeoutInterval: timeoutInterval ?? requestTimeout)
     }
     
-    
     //
     // MARK: PRIVATE
     //
     
     /// OSLog for custom logging
     private static let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.ClientConfiguration")
-    
-    /**
-     Creates a language header of the preferred languages set by the user in the iOS device. Does not add the header if there is already a accept-language header set.
-     - Parameter headers: The existing headers where the accept-language header will be added. Inout parameter, the object containing the headers is modified directly.
-     */
-    private func createLanguageHeader(headers: inout HTTPHeaders, override: Bool = false) {
-        if headers.index(forKey: HTTPHelper.PreferredLanguagesKey) == nil {
-            headers[HTTPHelper.PreferredLanguagesKey] = HTTPHelper.acceptLanguageValue
-        }
-    }
-    
+
     /**
      Checks if the url is valid and of http or https scheme.
      - Parameter url: The URL to check.

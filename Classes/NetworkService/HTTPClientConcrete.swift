@@ -10,7 +10,11 @@ import Foundation
 import os
 
 public class HTTPClientConcrete: NSObject, HTTPClient {
-    
+    /// Request delegate that is called before the request is executed and when the result is handled. Is used as parameter for the created tasks and therefor bound to the task once created.
+    public weak var requestDelegate: RequestDelegate?
+
+    public weak var httpTaskDelegate: HTTPTaskDelegate?
+
     public var completionHandlerOperationQueue: OperationQueue?
     public var maxRetries: Int = 3
     
@@ -87,15 +91,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
         prepareTaskForStart(httpTask: httpTask, requestDelegate: self.requestDelegate, startTaskManually: startTaskManually)
         return httpTask
     }
-    
-    public func setRequestDelegate(requestDelegate: RequestDelegate) {
-        self.requestDelegate = requestDelegate
-    }
-    
-    public func removeRequestDelegate() {
-        requestDelegate = nil
-    }
-    
+
     /**
      
      - Parameter httpTask:
@@ -112,8 +108,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
             createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
         }
     }
-    
-    
+
     //
     // MARK: - PRIVATE
     //
@@ -126,10 +121,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     
     /// An array of http tasks which are currently in use (running, suspended, retried etc) and not completed yet.
     private var httpTasks = [HTTPTaskConcrete]()
-    
-    /// Request delegate that is called before the request is executed and when the result is handled. Is used as parameter for the created tasks and therefor bound to the task once created.
-    private weak var requestDelegate: RequestDelegate?
-    
+
     /// OSLog for custom logging
     private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.Client")
     
@@ -214,9 +206,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
             httpTask.resume()
         }
     }
-    
 }
-
 
 // MARK: - URL Session Delegate
 
@@ -276,6 +266,20 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         }
     }
 
+    // MARK: - Cache Handling
+
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
+        guard let httpTaskDelegate = self.httpTaskDelegate,
+              let task = getTaskThreadSafe(taskIdentifier: dataTask.taskIdentifier) else {
+            os_log("Caching: Agreed to cache response data for request %{public}@", log: customLog, type: .debug, dataTask.currentRequest?.debugDescription ?? "unknown")
+
+            completionHandler(proposedResponse)
+            return
+        }
+
+        httpTaskDelegate.httpClient(self, httpTask: task, willCacheResponse: proposedResponse, completionHandler: completionHandler)
+    }
+
     // MARK: - Handling redirects
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
@@ -289,10 +293,12 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
      - Parameter error: An Error object if the task was completed with an error.
      */
     private func complete(httpTask: HTTPTaskConcrete, error: Error?) {
+        let completionBlock = { httpTask.didCompleteWithError(error: error) }
+
         if completionHandlerOperationQueue != nil {
-            completionHandlerOperationQueue?.addOperation { httpTask.didCompleteWithError(error: error) }
+            completionHandlerOperationQueue?.addOperation(completionBlock)
         } else {
-            httpTask.didCompleteWithError(error: error)
+            completionBlock()
         }
         guard let taskIdentifier = httpTask.taskIdentifier else {
             os_log("Problem: there is apparently no task in the HTTPTask! URLSessionTask cannot be deleted from array.", log: customLog, type: .error)

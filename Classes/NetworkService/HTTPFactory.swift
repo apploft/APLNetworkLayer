@@ -26,11 +26,10 @@ public class HTTPFactory {
      
      - Parameter baseURL: The URL that is the base for the later built and executed requests when the relative URL is provided. Optional parameter, but requests cannot be created with a relative URL without a base URL.
      - Parameter urlSessionConfiguration: A URLSessionConfiguration object that stores settings for the session such as the use of cellular data. Use URLSessionConfiguration.default to create your own configuration instead of new to avoid InvalidArgumentExceptions when setting properties.
-     - Parameter requestTimeout: A timeout value in seconds that will be set for every request and is relevant when the request is executed. Not the request timeout value of the session!
      - Returns: An HTTPClientConfiguration object. Can be nil if an invalid base URL is specified.
      */
-    public static func createConfiguration(baseURL: URL?,  urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.default, requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout) -> HTTPClientConfiguration? {
-        return HTTPClientConfigurationConcrete(baseURL: baseURL,  urlSessionConfiguration: urlSessionConfiguration, requestTimeout: requestTimeout)
+    public static func createConfiguration(baseURL: URL? = nil,  urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.default) -> HTTPClientConfiguration? {
+        return HTTPClientConfigurationConcrete(baseURL: baseURL,  urlSessionConfiguration: urlSessionConfiguration)
     }
     
     /**
@@ -43,8 +42,7 @@ public class HTTPFactory {
      - Parameter waitsForConnectivity: A Boolean value that indicates whether the session should wait for connectivity to become available, or fail immediately.Default value is true.
      - Returns: An HTTPClientConfiguration object. Can be nil if an invalid base URL is specified.
      */
-    public static func createConfiguration(baseURL: URL? = nil, defaultHeader: HTTPHeaders? = nil, requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout, allowsCellularAccess: Bool = true, waitsForConnectivity: Bool = true) -> HTTPClientConfiguration? {
-        return HTTPClientConfigurationConcrete(baseURL: baseURL, defaultHeader: defaultHeader, requestTimeout: requestTimeout, allowsCellularAccess: allowsCellularAccess, waitsForConnectivity: waitsForConnectivity)
-    }
-    
+    public static func createConfiguration(baseURL: URL? = nil, defaultHeader: HTTPHeaders? = nil, requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout, allowsCellularAccess: Bool = true, waitsForConnectivity: Bool = true, objectCache: URLCache? = nil, requestCachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy) -> HTTPClientConfiguration? {
+        return HTTPClientConfigurationConcrete(baseURL: baseURL, defaultHeader: defaultHeader, requestTimeout: requestTimeout, allowsCellularAccess: allowsCellularAccess, waitsForConnectivity: waitsForConnectivity, objectCache: objectCache, requestCachePolicy: requestCachePolicy)
+    }    
 }
