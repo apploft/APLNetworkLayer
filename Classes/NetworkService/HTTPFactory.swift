@@ -42,7 +42,7 @@ public class HTTPFactory {
      - Parameter waitsForConnectivity: A Boolean value that indicates whether the session should wait for connectivity to become available, or fail immediately.Default value is true.
      - Returns: An HTTPClientConfiguration object. Can be nil if an invalid base URL is specified.
      */
-    public static func createConfiguration(baseURL: URL? = nil, defaultHeader: HTTPHeaders? = nil, requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout, allowsCellularAccess: Bool = true, waitsForConnectivity: Bool = true, objectCache: URLCache? = nil, requestCachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy) -> HTTPClientConfiguration? {
-        return HTTPClientConfigurationConcrete(baseURL: baseURL, defaultHeader: defaultHeader, requestTimeout: requestTimeout, allowsCellularAccess: allowsCellularAccess, waitsForConnectivity: waitsForConnectivity, objectCache: objectCache, requestCachePolicy: requestCachePolicy)
+    public static func createConfiguration(baseURL: URL? = nil, defaultHeader: HTTPHeaders? = nil, requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout, allowsCellularAccess: Bool = true, waitsForConnectivity: Bool = true, urlCache: URLCache? = nil, requestCachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy) -> HTTPClientConfiguration? {
+        return HTTPClientConfigurationConcrete(baseURL: baseURL, defaultHeader: defaultHeader, requestTimeout: requestTimeout, allowsCellularAccess: allowsCellularAccess, waitsForConnectivity: waitsForConnectivity, urlCache: urlCache, requestCachePolicy: requestCachePolicy)
     }    
 }

@@ -9,7 +9,7 @@ import Foundation
 import os
 
 public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
-    public private(set) var objectCache: URLCache?
+    public private(set) var urlCache: URLCache?
     public private(set) var baseURL: URL?
     public private(set) var urlSessionConfiguration: URLSessionConfiguration
     public private(set) var requestTimeout: TimeInterval = HTTPHelper.DefaultRequestTimeout
@@ -51,7 +51,7 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
                              requestTimeout: TimeInterval,
                              allowsCellularAccess: Bool,
                              waitsForConnectivity: Bool,
-                             objectCache: URLCache?,
+                             urlCache: URLCache?,
                              requestCachePolicy: URLRequest.CachePolicy) {
         let urlSessionConfiguration = URLSessionConfiguration.default
         
@@ -60,8 +60,8 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
         urlSessionConfiguration.allowsCellularAccess = allowsCellularAccess
         urlSessionConfiguration.waitsForConnectivity = waitsForConnectivity
 
-        if objectCache != nil {
-            urlSessionConfiguration.urlCache = objectCache
+        if urlCache != nil {
+            urlSessionConfiguration.urlCache = urlCache
         }
 
         urlSessionConfiguration.requestCachePolicy = requestCachePolicy
