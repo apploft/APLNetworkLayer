@@ -81,6 +81,9 @@ public protocol HTTPClientCore: class {
      - Returns: A task object that implements the Task Protocol.
      */
     func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask
+
+    /// Cancell all outstanding or ongoing http tasks
+    func cancelAllTasks()
 }
 
 extension HTTPClientCore {

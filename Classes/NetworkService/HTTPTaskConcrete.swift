@@ -8,8 +8,6 @@
 import Foundation
 import os
 
-/// OSLog for custom logging
-private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.HTTPTask")
 
 /// Handles a task and conforms to the HTTPTask protocol. Is a class because there would be problems
 /// with the variables of reference type being nil if it was a struct.
@@ -94,7 +92,7 @@ public class HTTPTaskConcrete: HTTPTask {
      - Parameter urlResponse:
      */
     public func didReceiveResponse(urlResponse: URLResponse) {
-        os_log("Task with taskIdentifier %d did receive response", log: customLog, type: .info, urlSessionTask?.taskIdentifier ?? -1)
+        os_log("HTTPTask with identifier %d did receive response '%{public}@", log: HTTPHelper.osLog, type: .debug, urlSessionTask?.taskIdentifier ?? -1, urlResponse.debugDescription)
         httpResponse = HTTPResponseConcrete(urlResponse: urlResponse)
     }
     
@@ -103,11 +101,9 @@ public class HTTPTaskConcrete: HTTPTask {
      - Parameter data: Data that has been transmitted
      */
     public func didReceiveData(data: Data) {
-//        os_log("Task with taskIdentifier %d did receive data", log: customLog, type: .info, urlSessionTask?.taskIdentifier ?? -1)
-        
         guard httpResponse != nil else {
             let message: StaticString = "Request completed without network errors but something went wrong, we didn't get a HTTPResponse!"
-            os_log(message, log: customLog, type: .error)
+            os_log(message, log: HTTPHelper.osLog, type: .error)
             assertionFailure(message.description)
             return
         }
@@ -125,17 +121,17 @@ public class HTTPTaskConcrete: HTTPTask {
      */
     public func didCompleteWithError(error: Error?) {
         if let error = error {
-            os_log("Task with taskIdentifier %d did complete with error", log: customLog, type: .error, urlSessionTask?.taskIdentifier ?? -1)
+            os_log("HTTPTask with identifier %d did complete with error '%{public}@", log: HTTPHelper.osLog, type: .error, urlSessionTask?.taskIdentifier ?? -1, error.localizedDescription ?? "unknown")
             completionHandler(.failure(error))
             return
         } else {
-            os_log("Task with taskIdentifier %d did complete without error", log: customLog, type: .info, urlSessionTask?.taskIdentifier ?? -1)
+            os_log("HTTPTask with identifier %d did complete without error", log: HTTPHelper.osLog, type: .info, urlSessionTask?.taskIdentifier ?? -1)
         }
         
         // check if the response is a HTTP response
         guard let httpResponse = httpResponse, (httpResponse.urlResponse as? HTTPURLResponse) != nil else {
             let message: StaticString = "Request completed without network errors but something went wrong, we didn't get a HTTPURLResponse!"
-            os_log(message, log: customLog, type: .error)
+            os_log(message, log: HTTPHelper.osLog, type: .error)
             assertionFailure(message.description)
             
             completionHandler(.failure(HTTPHelper.genericError))
@@ -207,8 +203,8 @@ class URLSessionTaskState: URLSessionTaskStateAndPriority {
             case .completed:
                 return HTTPTaskState.completed
             @unknown default:
-                os_log("URLSessionTask with taskIdentifier %d has unknown state. State pending is returned.",
-                       log: customLog,
+                os_log("Task with identifier %d has unknown state. State pending is returned.",
+                       log: HTTPHelper.osLog,
                        type: .info, urlSessionTask.taskIdentifier)
                 return HTTPTaskState.pending
             }
@@ -217,7 +213,7 @@ class URLSessionTaskState: URLSessionTaskStateAndPriority {
         set {}
     }
     
-    init(urlSessionTask:URLSessionTask, defaults: URLSessionTaskStateAndPriority = NoURLSessionTaskState()) {
+    init(urlSessionTask: URLSessionTask, defaults: URLSessionTaskStateAndPriority = NoURLSessionTaskState()) {
         self.urlSessionTask = urlSessionTask
         self.urlSessionTask.priority = defaults.priority
         
@@ -236,9 +232,10 @@ class URLSessionTaskState: URLSessionTaskStateAndPriority {
             break
         }
         
-        os_log("URLSessionTask with taskIdentifier %d has been set",
-               log: customLog,
-               type: .info, urlSessionTask.taskIdentifier)
+        os_log("HTTPTask with identifier %d created for request '%{public}@'",
+               log: HTTPHelper.osLog,
+               type: .info,
+               urlSessionTask.taskIdentifier, urlSessionTask.currentRequest?.debugDescription ?? "unknown")
     }
     
     func resume() {

@@ -87,9 +87,17 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = false, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
         let httpTask = HTTPTaskConcrete(urlRequest: urlRequest, completionHandler: completionHandler)
         addTaskThreadSafe(httpTask: httpTask)
-        os_log("HTTPTask was created.", log: customLog, type: .info)
+        os_log("HTTPTask was created.", log: HTTPHelper.osLog, type: .info)
         prepareTaskForStart(httpTask: httpTask, requestDelegate: self.requestDelegate, startTaskManually: startTaskManually)
         return httpTask
+    }
+
+    public func cancelAllTasks() {
+        os_log("Cancelling all tasks...", log: HTTPHelper.osLog, type: .debug)
+
+        doThreadSafe {
+            self.httpTasks.forEach { $0.cancel() }
+        }
     }
 
     /**
@@ -122,9 +130,6 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     /// An array of http tasks which are currently in use (running, suspended, retried etc) and not completed yet.
     private var httpTasks = [HTTPTaskConcrete]()
 
-    /// OSLog for custom logging
-    private let customLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "APLNetworkLayer.Client")
-    
     /**
      Executes a code block thread safe.
      - Parameter block: A code block to execute thread safe.
@@ -147,7 +152,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
         var httpTask: HTTPTaskConcrete?
         doThreadSafe {
             guard let index = findTaskInArray(taskIdentifier: taskIdentifier) else {
-                os_log("Task with taskIdentifier %d was not found in array", log: customLog, type: .error, taskIdentifier)
+                os_log("Task with taskIdentifier %d was not found in array", log: HTTPHelper.osLog, type: .error, taskIdentifier)
                 return
             }
             httpTask = httpTasks[index]
@@ -161,6 +166,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      */
     private func addTaskThreadSafe(httpTask: HTTPTaskConcrete) {
         doThreadSafe {
+            os_log("Adding task %d to task list.", log: HTTPHelper.osLog, type: .debug, httpTask.taskIdentifier ?? -1)
             httpTasks.append(httpTask)
         }
     }
@@ -172,9 +178,11 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     private func deleteTaskThreadSafe(taskIdentifier: Int) {
         doThreadSafe {
             guard let index = findTaskInArray(taskIdentifier: taskIdentifier) else {
-                os_log("Task with taskIdentifier %d was not found in array", log: customLog, type: .error, taskIdentifier)
+                os_log("Task with identifier %d was not found in task list", log: HTTPHelper.osLog, type: .error, taskIdentifier)
                 return
             }
+
+            os_log("Removing task %d from task list", log: HTTPHelper.osLog, type: .debug, taskIdentifier)
             httpTasks.remove(at: index)
         }
     }
@@ -200,7 +208,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
         urlSessionTask.priority = priority
         httpTask.urlSessionTask = urlSessionTask
         
-        os_log("URLSessionTask was created.", log: customLog, type: .info)
+        os_log("URLSessionTask for request '%{public}@' created.", log: HTTPHelper.osLog, type: .debug, httpTask.urlRequest.debugDescription)
         
         if !startTaskManually {
             httpTask.resume()
@@ -215,26 +223,27 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
     
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         guard let httpTask = getTaskThreadSafe(taskIdentifier: dataTask.taskIdentifier) else {
-            
-            let message: StaticString = "Problem in didReceiveResponse: HTTP Task is nil and contained URLSessionTask with taskIdentifier %d was not found! Task will be canceled."
-            os_log(message, log: customLog, type: .error, dataTask.taskIdentifier)
-            assertionFailure(String(format: message.description, dataTask.taskIdentifier))
+            let message: StaticString = "Did receive response but could not find a corresponding task with identifier %d in task list! Task will be canceled."
+
+            os_log(message, log: HTTPHelper.osLog, type: .error, dataTask.taskIdentifier)
+            assertionFailure(String(format: String(describing: message), dataTask.taskIdentifier))
             
             completionHandler(URLSession.ResponseDisposition.cancel)
             return
         }
         
         httpTask.didReceiveResponse(urlResponse: response)
+
         // TODO check size to become download task if too big
         completionHandler(URLSession.ResponseDisposition.allow)
     }
     
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         guard let httpTask = getTaskThreadSafe(taskIdentifier: dataTask.taskIdentifier) else {
-            
-            let message: StaticString = "Problem in didReceiveData: HTTP Task is nil and contained URLSessionTask with taskIdentifier %d was not found! Task will be canceled."
-            os_log(message, log: customLog, type: .error, dataTask.taskIdentifier)
-            assertionFailure(String(format: message.description, dataTask.taskIdentifier))
+            let message: StaticString = "Did receive data but could not find a corresponding task with identifier %d in task list!"
+
+            os_log(message, log: HTTPHelper.osLog, type: .error, dataTask.taskIdentifier)
+            assertionFailure(String(format: String(describing: message), dataTask.taskIdentifier))
             return
         }
         
@@ -244,25 +253,30 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let httpTask = getTaskThreadSafe(taskIdentifier: task.taskIdentifier) else {
             
-            let message: StaticString = "Problem in didCompleteWithError: HTTP Task is nil and contained URLSessionTask with taskIdentifier %d was not found! Task will be canceled."
-            os_log(message, log: customLog, type: .error, task.taskIdentifier)
-            assertionFailure(String(format: message.description, task.taskIdentifier))
+            let message: StaticString = "Request '%{public}@' did complete with error '%{public}@', but could not find a corresponding task with identifier %d in task list!"
+            os_log(message, log: HTTPHelper.osLog, type: .error, task.currentRequest?.debugDescription ?? "unknown", error?.localizedDescription ?? "nil", task.taskIdentifier)
+            assertionFailure(String(format: String(describing: message), task.taskIdentifier))
             return
         }
         
         httpTask.retryCounter += 1
-        
+
+        let callCompletionBlock = {
+            os_log("Request '%{public}@' did completed with error '%{public}@'", log: HTTPHelper.osLog, type: .debug, task.currentRequest?.debugDescription ?? "unknown", httpTask.urlRequest.debugDescription, error?.localizedDescription ?? "nil")
+            self.complete(httpTask: httpTask, error: error)
+        }
+
         if let requestDelegate = self.requestDelegate {
             requestDelegate.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
                 if shouldRetry && httpTask.retryCounter < self.maxRetries {
-                    os_log("Request should be retried: %@", log: self.customLog, type: .info, httpTask.urlRequest.url?.absoluteString ?? "URL cannot be accessed")
+                    os_log("Request '%{public}@' should be retried", log: HTTPHelper.osLog, type: .info, httpTask.urlRequest.debugDescription ?? "unknown")
                     self.prepareTaskForStart(httpTask: httpTask, requestDelegate: self.requestDelegate)
                 } else {
-                    self.complete(httpTask: httpTask, error: error)
+                    callCompletionBlock()
                 }
             }
         } else {
-            complete(httpTask: httpTask, error: error)
+            callCompletionBlock()
         }
     }
 
@@ -271,7 +285,7 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
         guard let httpTaskDelegate = self.httpTaskDelegate,
               let task = getTaskThreadSafe(taskIdentifier: dataTask.taskIdentifier) else {
-            os_log("Caching: Agreed to cache response data for request %{public}@", log: customLog, type: .debug, dataTask.currentRequest?.debugDescription ?? "unknown")
+            os_log("Agreed to cache response data for request %{public}@", log: HTTPHelper.osLog, type: .debug, dataTask.currentRequest?.debugDescription ?? "unknown")
 
             completionHandler(proposedResponse)
             return
@@ -301,7 +315,7 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
             completionBlock()
         }
         guard let taskIdentifier = httpTask.taskIdentifier else {
-            os_log("Problem: there is apparently no task in the HTTPTask! URLSessionTask cannot be deleted from array.", log: customLog, type: .error)
+            os_log("Task with for request '%{public}@' has not identifier hence cannot be removed from task list", log: HTTPHelper.osLog, type: .error, httpTask.urlRequest.debugDescription)
             return
         }
         deleteTaskThreadSafe(taskIdentifier: taskIdentifier)

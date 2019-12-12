@@ -6,6 +6,7 @@
 //  Copyright © 2018 de.apploft. All rights reserved.
 //
 import Foundation
+import os.log
 
 /// Provides helper functions or properties for the network layer implementation.
 public struct HTTPHelper {
@@ -47,5 +48,5 @@ public struct HTTPHelper {
     
     /// Logging subsystem for custom logging
     static let LogSubsystem = "de.apploft.networklayer"
-    
+    static let osLog = OSLog(subsystem: HTTPHelper.LogSubsystem, category: "HTTPClient")
 }
