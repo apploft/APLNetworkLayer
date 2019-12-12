@@ -262,7 +262,7 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         httpTask.retryCounter += 1
 
         let callCompletionBlock = {
-            os_log("Request '%{public}@' did completed with error '%{public}@'", log: HTTPHelper.osLog, type: .debug, task.currentRequest?.debugDescription ?? "unknown", httpTask.urlRequest.debugDescription, error?.localizedDescription ?? "nil")
+            os_log("Request '%{public}@' did complete with error '%{public}@'", log: HTTPHelper.osLog, type: .debug, task.currentRequest?.debugDescription ?? "unknown", error?.localizedDescription ?? "nil")
             self.complete(httpTask: httpTask, error: error)
         }
 
