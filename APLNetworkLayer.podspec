@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "APLNetworkLayer"
-  s.version      = "0.3.0"
+  s.version      = "0.3.1"
   s.summary      = "APLNetworkLayer is a convenient interface for Apple's network framework that provides commonly used features."
   
   s.description  = <<-DESC
@@ -16,7 +16,8 @@ Pod::Spec.new do |s|
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
 
   s.author       = { "Christine Pühringer" => "christine.puehringer@apploft.de",
-                     "Ahmet Akbal" => "ahmet.akbal@apploft.de" }
+                     "Ahmet Akbal" => "ahmet.akbal@apploft.de",
+                     "Nico Schümann" => "nico.schuemann@apploft.de" }
   
   s.swift_versions = ['4.0', '5.0']
 

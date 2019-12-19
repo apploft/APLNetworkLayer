@@ -11,7 +11,7 @@ import Foundation
 public protocol ConvenienceRequestCreating {
     
     /**
-     Creates a GET HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+     Creates an HTTP GET Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
      
      - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -23,7 +23,7 @@ public protocol ConvenienceRequestCreating {
      */
     func GETRequest(relativeUrl: String, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest?
     /**
-     Creates a GET HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+     Creates an HTTP GET Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
      
      - Parameter absoluteUrl:  The absolute URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -34,24 +34,53 @@ public protocol ConvenienceRequestCreating {
      - Returns: A GET request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property.
      */
     func GETRequest(absoluteUrl: URL, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest
-    
-    
+
+
     /**
-     Creates a POST HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
-     
+     Creates an HTTP PATCH Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+
      - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
      - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
      - Parameter body: Body of the request, has to be provided for a POST request.
      - Parameter cachePolicy: Cache policy of the URL request.
      - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
-     
-     - Returns: A POST request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property. Is optional because creating a HTTP request is not possible if base URL is not specified.
+
+     - Returns: A PATCH request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property. Is optional because creating a HTTP request is not possible if base URL is not specified.
      */
-    func POSTRequest(relativeUrl: String, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest?
+    func PATCHRequest(relativeUrl: String, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest?
+
     
     /**
-     Creates a POST HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+     Creates an HTTP PATCH Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+     
+     - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+     
+     - Returns: A PATCH request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property. Is optional because creating a HTTP request is not possible if base URL is not specified.
+     */
+    func PATCHRequest(absoluteUrl: URL, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest
+
+    /**
+     Creates an HTTP POST Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+
+     - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+
+     - Returns: A POST request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property.
+     */
+    func POSTRequest(relativeUrl: String, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest?
+
+    /**
+     Creates an HTTP POST Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
      
      - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -65,7 +94,7 @@ public protocol ConvenienceRequestCreating {
     func POSTRequest(absoluteUrl: URL, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest
     
     /**
-     Creates a PUT HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+     Creates an HTTP PUT Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
      
      - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -76,10 +105,12 @@ public protocol ConvenienceRequestCreating {
      
      - Returns: An PUT request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property. Is optional because creating a HTTP request is not possible if base URL is not specified.
      */
+
+
     func PUTRequest(relativeUrl: String, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest?
     
     /**
-     Creates a PUT HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+     Creates an HTTP PUT Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
      
      - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -93,7 +124,7 @@ public protocol ConvenienceRequestCreating {
     func PUTRequest(absoluteUrl: URL, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest
     
     /**
-     Creates a DELETE HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+     Creates an HTTP DELETE Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
      
      - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -107,7 +138,7 @@ public protocol ConvenienceRequestCreating {
     func DELETERequest(relativeUrl: String, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data?, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?) -> HTTPRequest?
     
     /**
-     Creates a DELETE HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+     Creates an HTTP DELETE Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
      
      - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -161,10 +192,51 @@ extension ConvenienceRequestCreating where Self: HTTPClientCore {
                            timeoutInterval: TimeInterval? = nil) -> HTTPRequest {
         return createRequest(absoluteUrl: absoluteUrl, method: .GET, queryParameters: queryParameters, headers: headers, body: nil, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
     }
-    
+
+    /**
+     Creates an HTTP PATCH Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+
+     - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+
+     - Returns: A POST request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property. Is optional because creating a HTTP request is not possible if base URL is not specified.
+     */
+    public func PATCHRequest(relativeUrl: String,
+                            queryParameters: HttpQueryParameters? = nil,
+                            headers: HTTPHeaders? = nil,
+                            body: Data,
+                            cachePolicy: URLRequest.CachePolicy? = nil,
+                            timeoutInterval: TimeInterval? = nil) -> HTTPRequest? {
+        return createRequest(relativeUrl: relativeUrl, method: .PATCH, queryParameters: queryParameters, headers: headers, body: body, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
+    }
+
+    /**
+     Creates an HTTP PATCH Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+
+     - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+
+     - Returns: A POST request with the given parameters that conforms to the HTTPRequest protocol. Can be converted to an URL request by using the .urlRequest property.
+     */
+    public func PATCHRequest(absoluteUrl: URL,
+                            queryParameters: HttpQueryParameters? = nil,
+                            headers: HTTPHeaders? = nil,
+                            body: Data,
+                            cachePolicy: URLRequest.CachePolicy? = nil,
+                            timeoutInterval: TimeInterval? = nil) -> HTTPRequest {
+        return createRequest(absoluteUrl: absoluteUrl, method: .PATCH, queryParameters: queryParameters, headers: headers, body: body, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
+    }
     
     /**
-     Creates a POST HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+     Creates an HTTP POST Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
      
      - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -185,7 +257,7 @@ extension ConvenienceRequestCreating where Self: HTTPClientCore {
     }
     
     /**
-     Creates a POST HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+     Creates an HTTP POST Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
      
      - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -206,7 +278,7 @@ extension ConvenienceRequestCreating where Self: HTTPClientCore {
     }
     
     /**
-     Creates a PUT HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+     Creates an HTTP PUT Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
      
      - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -227,7 +299,7 @@ extension ConvenienceRequestCreating where Self: HTTPClientCore {
     }
     
     /**
-     Creates a PUT HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+     Creates an HTTP PUT Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
      
      - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -248,7 +320,7 @@ extension ConvenienceRequestCreating where Self: HTTPClientCore {
     }
     
     /**
-     Creates a DELETE HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
+     Creates an HTTP DELETE Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters. Can only be used if a base URL was provided in the configuration, will fail otherwise.
      
      - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
@@ -269,7 +341,7 @@ extension ConvenienceRequestCreating where Self: HTTPClientCore {
     }
     
     /**
-     Creates a DELETE HTTP Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
+     Creates an HTTP DELETE Request with the given parameters. Default values are provided for everything but the relative URL, which is added to the base URL from the client configuration. Calls the create request method of the HTTPClient with the given parameters.
      
      - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
      - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.

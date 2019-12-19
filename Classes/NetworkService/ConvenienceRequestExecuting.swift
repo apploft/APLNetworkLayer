@@ -43,6 +43,42 @@ public protocol ConvenienceRequestExecuting {
      - Returns: A task object that implements the HTTPTask protocol.
      */
     func GET(absoluteUrl: URL, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?, startTaskManually: Bool, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask
+
+    /**
+     Convenience Method. Takes at least a relative URL, a body and a completion Handler as parameter and creates a HTTP PATCH request and task. Returns the task conforming to the HTTPTask protocol.
+     Default values are provided if parameters are not set. Task is started automatically by default. Set startTaskManually to true to start the task manually.
+     Use the convenience method if you don't want to make any changes to the created http or url request.
+
+     - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+     - Parameter startTaskManually: If set true the task needs to be resumed manually after calling this method. Default value is false, the task will be resumed automatically in this function.
+     - Parameter completionHandler: A completion handler that takes a result of type HTTPResponse or an Error object.
+
+     - Returns: A task object that implements the HTTPTask protocol. HTTPTask is optional because creating a HTTP request is not possible if base URL is not specified.
+     */
+    func PATCH(relativeUrl: String, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?, startTaskManually: Bool, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask?
+
+    /**
+     Convenience Method. Takes at least an absolute URL, a body and a completion Handler as parameter and creates a HTTP PATCH request and task. Returns the task conforming to the HTTPTask protocol.
+     Default values are provided if parameters are not set. Task is started automatically by default. Set startTaskManually to true to start the task manually.
+     Use the convenience method if you don't want to make any changes to the created http or url request.
+
+     - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+     - Parameter startTaskManually: If set true the task needs to be resumed manually after calling this method. Default value is false, the task will be resumed automatically in this function.
+     - Parameter completionHandler: A completion handler that takes a result of type HTTPResponse or an Error object.
+
+     - Returns: A task object that implements the HTTPTask protocol.
+     */
+    func PATCH(absoluteUrl: URL, queryParameters: HttpQueryParameters?, headers: HTTPHeaders?, body: Data, cachePolicy: URLRequest.CachePolicy?, timeoutInterval: TimeInterval?, startTaskManually: Bool, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask
     
     /**
      Convenience Method. Takes at least a relative URL, a body and a completion Handler as parameter and creates a HTTP POST request and task. Returns the task conforming to the HTTPTask protocol.
@@ -209,7 +245,65 @@ extension ConvenienceRequestExecuting where Self: HTTPClientCore & ConvenienceRe
         let request = GETRequest(absoluteUrl: absoluteUrl, queryParameters: queryParameters, headers: headers, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
         return createHTTPTask(urlRequest: request.urlRequest, startTaskManually: startTaskManually, completionHandler: completionHandler)
     }
-    
+
+    /**
+     Convenience Method. Takes at least a relative URL, a body and a completion Handler as parameter and creates a HTTP PATCH request and task. Returns the task conforming to the HTTPTask protocol.
+     Default values are provided if parameters are not set. Task is started automatically by default. Set startTaskManually to true to start the task manually.
+     Use the convenience method if you don't want to make any changes to the created http or url request.
+
+     - Parameter relativeUrl: The relative URL to the configured base URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+     - Parameter startTaskManually: If set true the task needs to be resumed manually after calling this method. Default value is false, the task will be resumed automatically in this function.
+     - Parameter completionHandler: A completion handler that takes a result of type HTTPResponse or an Error object.
+
+     - Returns: A task object that implements the HTTPTask protocol. HTTPTask is optional because creating a HTTP request is not possible if base URL is not specified.
+     */
+    public func PATCH(relativeUrl: String,
+                     queryParameters: HttpQueryParameters? = nil,
+                     headers: HTTPHeaders? = nil,
+                     body: Data,
+                     cachePolicy: URLRequest.CachePolicy? = nil,
+                     timeoutInterval: TimeInterval? = nil,
+                     startTaskManually: Bool = false,
+                     completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask? {
+        guard let request = PATCHRequest(relativeUrl: relativeUrl, queryParameters: queryParameters, headers: headers, body: body, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval) else {
+            return nil
+        }
+        return createHTTPTask(urlRequest: request.urlRequest, startTaskManually: startTaskManually, completionHandler: completionHandler)
+    }
+
+    /**
+     Convenience Method. Takes at least an absolute URL, a body and a completion Handler as parameter and creates a HTTP PATCH request and task. Returns the task conforming to the HTTPTask protocol.
+     Default values are provided if parameters are not set. Task is started automatically by default. Set startTaskManually to true to start the task manually.
+     Use the convenience method if you don't want to make any changes to the created http or url request.
+
+     - Parameter absoluteUrl: The absolute URL for the API call. Mandatory parameter.
+     - Parameter queryParameters: A dictionary of type [String: String] that contains the query parameters. Default value is nil.
+     - Parameter headers: A dictionary of type [AnyHashable: Any] that contains the headers. Default value is nil.
+     - Parameter body: Body of the request, has to be provided for a POST request.
+     - Parameter cachePolicy: Cache policy of the URL request.
+     - Parameter timeoutInterval: The timeout interval for this particular request. If not set the value set in the HTTPClientConfiguration will be used.
+     - Parameter startTaskManually: If set true the task needs to be resumed manually after calling this method. Default value is false, the task will be resumed automatically in this function.
+     - Parameter completionHandler: A completion handler that takes a result of type HTTPResponse or an Error object.
+
+     - Returns: A task object that implements the HTTPTask protocol.
+     */
+    public func PATCH(absoluteUrl: URL,
+                     queryParameters: HttpQueryParameters? = nil,
+                     headers: HTTPHeaders? = nil,
+                     body: Data,
+                     cachePolicy: URLRequest.CachePolicy? = nil,
+                     timeoutInterval: TimeInterval? = nil,
+                     startTaskManually: Bool = false,
+                     completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
+        let request = PATCHRequest(absoluteUrl: absoluteUrl, queryParameters: queryParameters, headers: headers, body: body, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
+        return createHTTPTask(urlRequest: request.urlRequest, startTaskManually: startTaskManually, completionHandler: completionHandler)
+    }
+
     /**
      Convenience Method. Takes at least a relative URL, a body and a completion Handler as parameter and creates a HTTP POST request and task. Returns the task conforming to the HTTPTask protocol.
      Default values are provided if parameters are not set. Task is started automatically by default. Set startTaskManually to true to start the task manually.

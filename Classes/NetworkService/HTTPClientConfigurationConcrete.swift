@@ -139,9 +139,9 @@ public final class HTTPClientConfigurationConcrete: HTTPClientConfiguration {
             if body != nil {
                 os_log("Something seems to be wrong. A body has been set in a GET request!", log: HTTPClientConfigurationConcrete.customLog, type: .debug)
             }
-        case .POST, .PUT:
+        case .PATCH, .POST, .PUT:
             if body == nil {
-                os_log("Something seems to be wrong. No body has been set in a POST or PUT request!", log: HTTPClientConfigurationConcrete.customLog, type: .debug)
+                os_log("Something seems to be wrong. No body has been set in a PATCH, POST or PUT request!", log: HTTPClientConfigurationConcrete.customLog, type: .debug)
             }
         case .DELETE:
             // optional body
