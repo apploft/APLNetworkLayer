@@ -15,7 +15,7 @@ public typealias HTTPHeaders = [AnyHashable: Any]
 
 /// Enum with the HTTP methods as cases GET, POST, PUT and DELETE.
 public enum HttpRequestMethod: String {
-    case GET, POST, PUT, DELETE
+    case GET, PATCH, POST, PUT, DELETE
 }
 
 /// A protocol for a HTTP request. 

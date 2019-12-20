@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03BB8EE623ACCF7F0042CFB5 /* HTTPTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BB8EE523ACCF7F0042CFB5 /* HTTPTaskDelegate.swift */; };
 		829BC96521637F2900E188B9 /* APLNetworkLayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 829BC95C21637F2800E188B9 /* APLNetworkLayer.framework */; };
 		829BC97321637F7900E188B9 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82752E672154E450003C6C29 /* SystemConfiguration.framework */; };
 		829BC97421637F8700E188B9 /* APLNetworkLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D5CCF7C20F8D1F800BE8D8A /* APLNetworkLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -49,6 +50,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03BB8EE523ACCF7F0042CFB5 /* HTTPTaskDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTaskDelegate.swift; sourceTree = "<group>"; };
 		6AB5DC5E210E260B00D96C37 /* Requirements-NetworkLayer.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Requirements-NetworkLayer.rtf"; sourceTree = "<group>"; };
 		6AC4D6872111D34500B80790 /* HTTPClientConcrete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClientConcrete.swift; sourceTree = "<group>"; };
 		82136231212C6B7400644165 /* HTTPTaskConcrete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTaskConcrete.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				82E17BF2212D9E9600AE9D38 /* HTTPResponse.swift */,
 				82E17BF4212D9EA400AE9D38 /* HTTPResponseConcrete.swift */,
 				82560AD121352B910059042F /* RequestDelegate.swift */,
+				03BB8EE523ACCF7F0042CFB5 /* HTTPTaskDelegate.swift */,
 			);
 			path = NetworkService;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 				829BC97621637FAF00E188B9 /* URLRequestExtension.swift in Sources */,
 				829BC97721637FAF00E188B9 /* URLComponentsExtension.swift in Sources */,
 				829BC97821637FAF00E188B9 /* HTTPURLResponseExtension.swift in Sources */,
+				03BB8EE623ACCF7F0042CFB5 /* HTTPTaskDelegate.swift in Sources */,
 				829BC98B21637FBE00E188B9 /* NetworkReachabilityObserver.swift in Sources */,
 				829BC98D21637FC100E188B9 /* NetworkReachabilityImpl.m in Sources */,
 				829BC98C21637FBE00E188B9 /* NetworkReachability.swift in Sources */,

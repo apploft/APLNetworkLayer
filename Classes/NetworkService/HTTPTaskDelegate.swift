@@ -1,5 +1,5 @@
 //
-//  ObjectCacheDelegate.swift
+//  HTTPTaskDelegate.swift
 //  APLNetworkLayer
 //
 //  Created by Tino Rachui on 03.12.19.
