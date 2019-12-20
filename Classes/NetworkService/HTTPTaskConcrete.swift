@@ -121,7 +121,7 @@ public class HTTPTaskConcrete: HTTPTask {
      */
     public func didCompleteWithError(error: Error?) {
         if let error = error {
-            os_log("HTTPTask with identifier %d did complete with error '%{public}@", log: HTTPHelper.osLog, type: .error, urlSessionTask?.taskIdentifier ?? -1, error.localizedDescription ?? "unknown")
+            os_log("HTTPTask with identifier %d did complete with error '%{public}@", log: HTTPHelper.osLog, type: .error, urlSessionTask?.taskIdentifier ?? -1, error.localizedDescription)
             completionHandler(.failure(error))
             return
         } else {

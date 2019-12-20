@@ -269,7 +269,7 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         if let requestDelegate = self.requestDelegate {
             requestDelegate.didCompleteRequest(httpResponse: httpTask.httpResponse, error: error) { shouldRetry in
                 if shouldRetry && httpTask.retryCounter < self.maxRetries {
-                    os_log("Request '%{public}@' should be retried", log: HTTPHelper.osLog, type: .info, httpTask.urlRequest.debugDescription ?? "unknown")
+                    os_log("Request '%{public}@' should be retried", log: HTTPHelper.osLog, type: .info, httpTask.urlRequest.debugDescription)
                     self.prepareTaskForStart(httpTask: httpTask, requestDelegate: self.requestDelegate)
                 } else {
                     callCompletionBlock()
