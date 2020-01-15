@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import NetworkReachability
 
 /**
 Any object receiving network status updates must conform to this protocol.

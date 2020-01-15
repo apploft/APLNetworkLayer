@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import NetworkReachability
 
 /**
  Monitors the network's reachability. The current network status can be retrieved
