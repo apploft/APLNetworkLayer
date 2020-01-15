@@ -16,6 +16,7 @@ List of features of the APLNetworkLayer:
 - [x] Provides an interface to perform authentication, token refresh or similar tasks
 - [x] Observer on network reachability and status
 - [x] No usage of external libraries, no dependencies
+- [x] Convenience request warpper allowing PromiseKit-style completion handler chaining 
 
 
 ## Table of Contents
@@ -81,6 +82,29 @@ let task = httpClient.GET(relativeUrl: relativeUrl) { [weak self] (result: APLNe
         completion(Result.failure(error))
     }
 }
+```
+
+Using of the request convenience methods
+
+The user has to make sure the used range make sense and do not overlap etc.
+
+```swift
+
+httpClient.GET(relativeUrl: "...")
+          .statusCodeSuccess { (data, _) in
+    // handle data on success 
+}.catch { (data, _, _) in
+    // on any client or server error execute this block
+}.start()
+
+httpClient.GET(relativeUrl: "...)
+          .statusCode(200) { // on status code 200 execute this block }
+          .statusCode(401) { // on status code 401 execute this block }
+          .statusCode(..<410) { // on all status codes uo to 410 execute this block }
+          .statusCode(500...599) { // on status codes between 500 and 599 execute this block }
+          .anyStatusCode() { // on any status code not captured by other handlers execute this block }
+          .catch { // called on any error network or http status code within 400-599  }           
+          .start()
 ```
 
 This can also be done with absolute URLs and different types of requests. You are able to fully configure all parameters of the client configuration and the requests.

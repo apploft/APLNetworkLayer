@@ -3,11 +3,11 @@
 //  APLNetworkLayer
 //
 //  Created by apploft on 18.09.18.
-//  Copyright © 2018 de.apploft. All rights reserved.
+//  Copyright © 2020 apploft GmbH. All rights reserved.
 //
 import Foundation
 
-public typealias HTTPClient = HTTPClientCore & ConvenienceRequestCreating & ConvenienceRequestExecuting
+public typealias HTTPClient = HTTPClientCore & ConvenienceRequestCreating & ConvenienceRequestExecuting & HTTPRequestMethods
 
 /// typealias for the network completion handler with a HTTPResponse or Error as parameters and returns Void
 public typealias NetworkCompletionHandler = (HTTPResult<HTTPResponse>) -> Void
@@ -99,5 +99,8 @@ extension HTTPClientCore {
     public func createHTTPTask(urlRequest: URLRequest, startTaskManually: Bool = false, completionHandler: @escaping NetworkCompletionHandler) -> HTTPTask {
         return createHTTPTask(urlRequest: urlRequest, startTaskManually: startTaskManually, completionHandler: completionHandler)
     }
-    
+
+    public func cancelAllTasks() {
+        cancelAllTasks()
+    }
 }
