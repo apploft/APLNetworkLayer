@@ -5,6 +5,8 @@
 //  Created by apploft on 15.01.2020.
 //  Copyright © 2020 apploft GmbH. All rights reserved.
 
+import Foundation
+
 class HTTPRequestMethodConcrete: HTTPRequestMethod {
     typealias NetworkErrorCompletionHandler = (Error?) -> Void
 
