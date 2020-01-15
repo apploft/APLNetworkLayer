@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "APLNetworkLayer"
-  s.version      = "0.9.0"
+  s.version      = "0.9.1"
   s.summary      = "APLNetworkLayer is a convenient interface for Apple's network framework that provides commonly used features."
   
   s.description  = <<-DESC
