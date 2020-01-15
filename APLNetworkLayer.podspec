@@ -17,7 +17,8 @@ Pod::Spec.new do |s|
 
   s.author       = { "Christine Pühringer" => "christine.puehringer@apploft.de",
                      "Ahmet Akbal" => "ahmet.akbal@apploft.de",
-                     "Nico Schümann" => "nico.schuemann@apploft.de" }
+                     "Nico Schümann" => "nico.schuemann@apploft.de",
+					 "Tino Rachui" => "tino.rachui@apploft.de" }
   
   s.swift_versions = ['4.0', '5.0']
 
@@ -25,8 +26,7 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/apploft/APLNetworkLayer.git", :tag => s.version.to_s }
 
-  s.source_files  = "Classes", "Classes/**/*.{swift}", "Classes/**/*.{h,m}"
-  s.exclude_files = "Classes/Exclude"
+  s.source_files  = "Classes", "Classes/**/*.{swift}", "Classes/**/*.{h,m}", "Sources/APLNetworkLayer/**/*.{swift}"
 
   s.requires_arc = true
 
