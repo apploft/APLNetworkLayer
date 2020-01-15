@@ -2,9 +2,8 @@
 //  JSONDataDecoderInt.swift
 //  TestInterfaceJsonLoader
 //
-//  Created by Ahmet Akbal on 16.05.19.
-//  Copyright © 2019 Ahmet Akbal. All rights reserved.
-//
+//  Created by apploft on 15.01.2020.
+//  Copyright © 2020 apploft GmbH. All rights reserved.
 
 import Foundation
 import os.log
@@ -37,6 +36,7 @@ public class JSONDataDecoder {
      - Returns: Object of data type T containing decoded data
      */
     
+    @available(OSX 10.12, *)
     public static func fromData<T: Decodable>(data: Data, keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .iso8601) throws -> T {
         
         let decoder = JSONDecoder()
@@ -65,6 +65,7 @@ public class JSONDataDecoder {
      - Returns: Object of data type T containing decoded data
      */
     
+    @available(OSX 10.12, *)
     public static func fromFileURL<T: Decodable>(_ fileUrl: URL, keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .iso8601) throws -> T {
         
         #if DEBUG
@@ -77,12 +78,13 @@ public class JSONDataDecoder {
         do {
             data = try Data(contentsOf: fileUrl)
         } catch let error {
-            let logger = OSLog(subsystem: subsystem, category:  "error");
+            let logger = OSLog(subsystem: subsystem, category:  "error")
             let debugInfo = error as CustomDebugStringConvertible
+
             os_log(msgContentsOfUrlNotLoaded ,log: logger, type: .debug, fileUrl.absoluteString, debugInfo.debugDescription)
+
             throw JSONDataDecoder.DecoderError.contentsOfUrlCouldNotBeLoaded
         }
-        
         return try fromData(data: data, keyCodingStrategy: keyCodingStrategy, dateDecodingStrategy: dateDecodingStrategy)
     }
     
@@ -97,10 +99,11 @@ public class JSONDataDecoder {
      
      - Returns: Object of data type T containing decoded data
      */
+    @available(OSX 10.12, *)
     public static func fromLocalFileNamed<T: Decodable>(_ fileName: StaticString, fileExtension: String? = "json", keyCodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase, dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .iso8601) throws -> T {
         
         guard let fileUrl = Bundle.main.url(forResource: "\(fileName)", withExtension: fileExtension) else {
-            let logger = OSLog(subsystem: subsystem, category:  "error");
+            let logger = OSLog(subsystem: subsystem, category:  "error")
 
             if (fileExtension == nil) {
                 os_log(msgFileNotFoundWithoutExt, log: logger, type: .debug, "\(fileName)")
@@ -109,7 +112,6 @@ public class JSONDataDecoder {
             }
             throw JSONDataDecoder.DecoderError.fileNotFound
         }
-
         return try fromFileURL(fileUrl, keyCodingStrategy: keyCodingStrategy, dateDecodingStrategy: dateDecodingStrategy)
     }
 

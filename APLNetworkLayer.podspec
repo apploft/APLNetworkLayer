@@ -30,9 +30,9 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.subspec 'Utilities' do |sp|
-    sp.platform     = :ios, "10.0"
-    sp.source_files = 'Utilities/Classes/**/*.{swift}'
+  s.subspec 'Utils' do |sp|
+    sp.platform     = :ios, "11.0"
+    sp.source_files = "Sources/APLNetworkUtils/*.{swift}"
   end
 
 end

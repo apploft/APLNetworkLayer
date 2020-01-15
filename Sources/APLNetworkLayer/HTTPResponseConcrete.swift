@@ -41,6 +41,7 @@ public class HTTPResponseConcrete: HTTPResponse {
             return .serverError
         default:
             os_log("Unknown status code: %d", log: customLog, type: .error, httpURLResponse.statusCode)
+
             return .undefined
         }
     }

@@ -2,8 +2,8 @@
 //  JSONDataEncoder.swift
 //  APLNetworkLayer
 //
-//  Created by Tino Rachui on 01.08.19.
-//
+//  Created by apploft on 15.01.2020.
+//  Copyright © 2020 apploft GmbH. All rights reserved.
 
 import Foundation
 import os.log
@@ -24,6 +24,7 @@ public class JSONDataEncoder {
     ///   - dateEncodingStrategy: date encoding strategy, default is 'iso8601'
     /// - Returns: a data representation of the provided model object
     /// - Throws: an error and logs an error to the error console
+    @available(OSX 10.12, *)
     public static func encodeObject<T: Encodable>(_ object: T, keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .convertToSnakeCase, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601) throws -> Data {
         let jsonEncoder = JSONEncoder()
 

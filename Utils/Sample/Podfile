@@ -7,14 +7,14 @@ target 'Sample' do
 
   # Pods for Sample
   pod 'APLNetworkLayer', :path => '../../'
-  pod 'APLNetworkLayer/Utilities', :path => '../../'
+  pod 'APLNetworkLayer/Utils', :path => '../../'
   
   
   target 'SampleTests' do
      inherit! :search_paths
     # Pods for testing
     pod 'APLNetworkLayer', :path => '../../'
-    pod 'APLNetworkLayer/Utilities', :path => '../../'
+    pod 'APLNetworkLayer/Utils', :path => '../../'
    end
 
 end

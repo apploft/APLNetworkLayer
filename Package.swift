@@ -24,6 +24,8 @@ let package = Package(
         .target(
             name: "APLNetworkLayer",
             dependencies: []),
+        .target(name: "APLNetworkUtils",
+                dependencies: []),
         .testTarget(
             name: "APLNetworkLayerTests",
             dependencies: ["APLNetworkLayer"]),

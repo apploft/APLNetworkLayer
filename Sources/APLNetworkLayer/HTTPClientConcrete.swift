@@ -5,7 +5,6 @@
 //  Created by apploft on 01.08.18.
 //  Copyright © 2018 de.apploft. All rights reserved.
 //
-import UIKit
 import Foundation
 import os
 
