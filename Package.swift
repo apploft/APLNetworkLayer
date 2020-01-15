@@ -13,6 +13,8 @@ let package = Package(
         .library(
             name: "APLNetworkLayer",
             targets: ["APLNetworkLayer"]),
+        .library(name: "APLNetworkUtils",
+                 targets: ["APLNetworkUtils"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
