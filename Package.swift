@@ -15,8 +15,8 @@ let package = Package(
             targets: ["APLNetworkLayer"]),
         .library(name: "APLNetworkUtils",
                  targets: ["APLNetworkUtils"]),
-		.library(name: "NetworkReachability",				
-				 targets: [“NetworkReachability”])
+		.library(name: "NetworkReachability",
+				 targets: ["NetworkReachability"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -28,10 +28,12 @@ let package = Package(
         .target(
             name: "APLNetworkLayer",
             dependencies: []),
-		.target(name: "NetworkReachability",
+		.target(
+            name: "NetworkReachability",
 			dependencies: []),
-        .target(name: "APLNetworkUtils",
-            dependencies: ["NetworkReachability"]),						
+        .target(
+            name: "APLNetworkUtils",
+            dependencies: ["NetworkReachability"]),
         .testTarget(
             name: "APLNetworkLayerTests",
             dependencies: ["APLNetworkLayer"]),
