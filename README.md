@@ -22,20 +22,16 @@ List of features of the APLNetworkLayer:
 ## Table of Contents
 
 * [Installation](#installation)
-    * [CocoaPods](#cocoapods)
+    * [Swift Package](#swiftpackage)
 * [Usage](#usage)
 * [Architecture](#architecture)
 * [License](#license)
 
 ## Installation
 
-### [CocoaPods](https://guides.cocoapods.org/using/using-cocoapods.html)
+### [Swift Package](https://github.com/apple/swift-package-manager/blob/master/Documentation/PackageDescription.md#supportedplatform)
 
-Add this to your Podfile:
-
-```ruby
-pod "APLNetworkLayer"
-```
+Just integrate the APLNetworkLayer via Xcode 11 - that's it!
 
 ## Usage
 
