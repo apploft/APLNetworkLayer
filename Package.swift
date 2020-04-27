@@ -15,6 +15,10 @@ let package = Package(
             type: .dynamic,
             targets: ["APLNetworkLayer"]
         ),
+        .library(name: "APLFormContentCreation",
+                 type: .dynamic,
+                 targets: ["APLFormContentCreation"]
+        ),
         .library(name: "APLNetworkUtils",
                  type: .dynamic,
                  targets: ["APLNetworkUtils"]),
@@ -37,8 +41,14 @@ let package = Package(
         .target(
             name: "APLNetworkUtils",
             dependencies: ["NetworkReachability"]),
+        .target(
+            name: "APLFormContentCreation",
+            dependencies: []),
         .testTarget(
             name: "APLNetworkLayerTests",
             dependencies: ["APLNetworkLayer"]),
+        .testTarget(
+            name: "APLFormContentCreationTests",
+            dependencies: ["APLFormContentCreation"]),
     ]
 )
