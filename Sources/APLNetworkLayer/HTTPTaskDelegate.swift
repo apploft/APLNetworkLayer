@@ -8,7 +8,7 @@
 import Foundation
 
 
-/// A decision handler on whether or not to cache 'GET' request responses
+/// A delegate for httpTask-level events
 public protocol HTTPTaskDelegate: class {
 
     /// Ask the delegate whether or not a certain request response should
@@ -21,4 +21,12 @@ public protocol HTTPTaskDelegate: class {
     /// with the answer on whether to cache the proposed cache entry or not.
 
     func httpClient(_ httpClient: HTTPClient, httpTask: HTTPTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void)
+
+
+    /// Informs the delegate that a httpTask is waiting for network
+    /// connectivity, e.g. because the device is offline.
+    /// - Parameters: httpClient the HTTP client on which the request has
+    /// been initiated
+    /// - Parameters: httpTask the corresponding http task
+    func httpClient(_ httpClient: HTTPClient, httpTaskIsWaitingForConnectivity httpTask: HTTPTask)
 }
