@@ -300,6 +300,17 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         completionHandler(request)
     }
 
+    // MARK: - Connectivity Handling
+
+    public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
+        guard let httpTaskDelegate = self.httpTaskDelegate,
+            let httpTask = getTaskThreadSafe(taskIdentifier: task.taskIdentifier) else {
+            return
+        }
+
+        httpTaskDelegate.httpClient(self, httpTaskIsWaitingForConnectivity: httpTask)
+    }
+
     /**
      Handles when the task is completed and will not be retried anymore.
      - Parameter httpTask: The task that has been completed.
