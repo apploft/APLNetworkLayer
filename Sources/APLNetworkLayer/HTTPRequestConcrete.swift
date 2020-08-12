@@ -63,7 +63,7 @@ public class HTTPRequestConcrete: HTTPRequest {
         request.allHTTPHeaderFields = headers as? [String:String]
         
         switch method {
-        case .POST, .PUT:
+        case .PATCH, .POST, .PUT:
             request.httpBody = body
         default:
             break
