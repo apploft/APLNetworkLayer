@@ -107,9 +107,16 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      */
     private func prepareTaskForStart(httpTask: HTTPTaskConcrete, requestDelegate: RequestDelegate? = nil, startTaskManually: Bool = false) {
         if let requestDelegate = requestDelegate {
-            requestDelegate.didCreateRequest(urlRequest: httpTask.urlRequest) { request in
-                httpTask.urlRequest = request
-                self.createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
+            requestDelegate.didCreateRequest(urlRequest: httpTask.urlRequest) { result in
+                switch result {
+                case .success(let request):
+                    httpTask.urlRequest = request
+                    self.createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
+
+                case .failure(let error):
+                    self.complete(httpTask: httpTask, error: error)
+                }
+
             }
         } else {
             createURLSessionTask(httpTask: httpTask, startTaskManually: startTaskManually)
