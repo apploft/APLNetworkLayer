@@ -9,6 +9,7 @@ import Foundation
 /// Content types are used in multipart/form-data requests. Each DataTransferEntity needs a content type to properly
 ///  generate the body of the request.
 public enum ContentType: String {
+    case pdf = "application/pdf"
     case binary = "application/octet-stream"
     case text = "text/plain"
     case css = "text/css"
