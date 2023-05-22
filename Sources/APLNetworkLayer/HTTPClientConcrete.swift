@@ -15,6 +15,7 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
     public weak var httpTaskDelegate: HTTPTaskDelegate?
 
     public var completionHandlerOperationQueue: OperationQueue?
+    private let taskCreationQueue = DispatchQueue(label: "APLNetworkLayer.TaskCreationQueue")
     public var maxRetries: Int = 3
     
     /**
@@ -210,14 +211,16 @@ public class HTTPClientConcrete: NSObject, HTTPClient {
      - Parameter priority: The priority the task will be executed with. If not set URLSessionTask.defaultPriority will be set.
      */
     private func createURLSessionTask(httpTask: HTTPTaskConcrete, startTaskManually: Bool, priority: Float = URLSessionTask.defaultPriority) {
-        let urlSessionTask = urlSession.dataTask(with: httpTask.urlRequest)
-        urlSessionTask.priority = priority
-        httpTask.urlSessionTask = urlSessionTask
-        
-        os_log("URLSessionTask for request '%{public}@' created.", log: HTTPHelper.osLog, type: .debug, httpTask.urlRequest.debugDescription)
-        
-        if !startTaskManually {
-            httpTask.resume()
+        taskCreationQueue.sync(flags: .barrier) {
+            let urlSessionTask = urlSession.dataTask(with: httpTask.urlRequest)
+            urlSessionTask.priority = priority
+            httpTask.urlSessionTask = urlSessionTask
+            
+            os_log("URLSessionTask for request '%{public}@' created.", log: HTTPHelper.osLog, type: .debug, httpTask.urlRequest.debugDescription)
+            
+            if !startTaskManually {
+                httpTask.resume()
+            }
         }
     }
 }
