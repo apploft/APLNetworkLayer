@@ -9,7 +9,7 @@ import Foundation
 
 
 /// A delegate for httpTask-level events
-public protocol HTTPTaskDelegate: class {
+public protocol HTTPTaskDelegate: AnyObject {
 
     /// Ask the delegate whether or not a certain request response should
     /// be cached or not.
@@ -29,4 +29,13 @@ public protocol HTTPTaskDelegate: class {
     /// been initiated
     /// - Parameters: httpTask the corresponding http task
     func httpClient(_ httpClient: HTTPClient, httpTaskIsWaitingForConnectivity httpTask: HTTPTask)
+
+    /// Requests credentials from the delegate in response to an authentication request from the remote server.
+    /// - Parameters: httpTask the corresponding http task
+    /// - Parameters: challenge  An object that contains the request for authentication.
+    /// - Parameters: A handler that your delegate method must call.
+    func httpClient(_ httpClient: HTTPClient,
+                    httpTask: HTTPTask,
+                    didReceive challenge: URLAuthenticationChallenge,
+                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
