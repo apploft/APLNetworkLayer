@@ -321,6 +321,20 @@ extension HTTPClientConcrete: URLSessionDataDelegate {
         httpTaskDelegate.httpClient(self, httpTaskIsWaitingForConnectivity: httpTask)
     }
 
+    public func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge, 
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+    {
+        guard let httpTaskDelegate = self.httpTaskDelegate,
+            let httpTask = getTaskThreadSafe(taskIdentifier: task.taskIdentifier) else {
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        httpTaskDelegate.httpClient(self, httpTask: httpTask, didReceive: challenge, completionHandler: completionHandler)
+    }
+
     /**
      Handles when the task is completed and will not be retried anymore.
      - Parameter httpTask: The task that has been completed.
